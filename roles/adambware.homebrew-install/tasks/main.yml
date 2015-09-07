@@ -1,2 +1,16 @@
 ---
 # tasks file for adambware.homebrew-install
+
+  - name: Update Homebrew
+    homebrew:
+      update_homebrew=yes
+
+  - name: Tap Kegs
+    homebrew_tap:
+      tap="{{ item }}"
+      state=present
+    with_items:
+      - homebrew/completions
+      - homebrew/dupes
+      - homebrew/versions
+      - caskroom/casks
