@@ -1,1 +1,56 @@
 ---
+---
+  - name: "Install Homebrew"
+    hosts: 127.0.0.1
+    connection: local
+    gather_facts: no
+    roles:
+      - adambware.homebrew-install
+
+  - name: "Install and configure zsh and oh-my-zsh"
+    hosts: 127.0.0.1
+    connection: local
+    gather_facts: no
+    roles:
+      - adambware.zsh
+
+  - name: "Install Homebrew Packages"
+    hosts: 127.0.0.1
+    connection: local
+    gather_facts: no
+    roles:
+      - adambware.homebrew-packages
+
+  - name: "Install Homebrew Caskroom Casks"
+    hosts: 127.0.0.1
+    connection: local
+    gather_facts: no
+    roles:
+      - adambware.homebrew-casks
+
+  - name: "Install and configure ruby via rbenv"
+    hosts: 127.0.0.1
+    connection: local
+    gather_facts: no
+    roles:
+      - adambware.ruby
+
+  - name: "Install and configure node via n"
+    hosts: 127.0.0.1
+    connection: local
+    gather_facts: no
+    roles:
+      - adambware.node
+
+  - name: "Install OS X Tweaks"
+    hosts: 127.0.0.1
+    connection: local
+    gather_facts: no
+    roles:
+      - adambware.osx
+
+  - name: "Install Private Things"
+    hosts: 127.0.0.1
+    connection: local
+    roles:
+      - adambware.private
