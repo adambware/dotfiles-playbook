@@ -19,4 +19,4 @@
       - homebrew/completions
       - homebrew/dupes
       - homebrew/versions
-      - caskroom/casks
+      - caskroom/cask
