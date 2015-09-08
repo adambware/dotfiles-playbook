@@ -2,9 +2,9 @@
 # tasks file for adambware.homebrew-install
 
   - name: Ensure that homebrew is installed with the script method
-    shell: >
-      ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      creates=/usr/local/Cellar
+    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    register: homebrew_result
+    failed_when: "homebrew_result.rc != 0 and 'Homebrew is already installed' not in homebrew_result.stderr"
 
   - name: Update Homebrew
     homebrew:
