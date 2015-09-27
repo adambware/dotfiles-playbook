@@ -1,2 +1,27 @@
 ---
 # tasks file for adambware.zsh
+
+  - name: Install zsh via homebrew
+    homebrew:
+      name=zsh
+      state=present
+      install_options=disable-etcdir
+
+  - name: Checking current shell
+    shell: echo $SHELL
+    register: current_shell
+
+  - name: Adding brew'd zsh to /etc/shells
+    sudo: yes
+    remote_user: "{{ mac_username }}"
+    lineinfile:
+      dest=/etc/shells
+      line="/usr/local/bin/zsh"
+    when:
+      current_shell.stdout != '/usr/local/bin/zsh'
+
+  - name: Setting brew'd zsh as default shell
+    remote_user: "{{ mac_username }}"
+    shell: chsh -s /usr/local/bin/zsh
+    when:
+      current_shell.stdout != '/usr/local/bin/zsh'
