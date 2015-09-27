@@ -1,0 +1,5 @@
+---
+# vars file for dotfiles-playbook
+
+# the logged in username running this playbook.
+main_username: adamboulware
