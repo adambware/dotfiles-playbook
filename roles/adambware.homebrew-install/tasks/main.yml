@@ -1,20 +1,14 @@
 ---
 # tasks file for adambware.homebrew-install
 
-  # - name: Ensure that homebrew is installed with the script method
-  #   shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-  #   register: homebrew_result
-  #   failed_when: "homebrew_result.rc != 0 and 'Homebrew is already installed' not in homebrew_result.stderr"
-
   # - name: Check if Homebrew is installed
   #   stat: path=/usr/local/bin/brew
   #   register: brew_installed
+#    when: brew_installed.stat.exists == false
 
   - name: Ensure Homebrew is installed
     shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > ~/brewlog.txt
-    args:
-      creates: /usr/local/bin/brew
-#    when: brew_installed.stat.exists == false
+      creates=/usr/local/bin/brew
 
   - name: Update Homebrew
     homebrew:
