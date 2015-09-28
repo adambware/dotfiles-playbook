@@ -6,13 +6,15 @@
   #   register: homebrew_result
   #   failed_when: "homebrew_result.rc != 0 and 'Homebrew is already installed' not in homebrew_result.stderr"
 
-  - name: Check if Homebrew is installed
-    stat: path=/usr/local/bin/brew
-    register: brew_installed
+  # - name: Check if Homebrew is installed
+  #   stat: path=/usr/local/bin/brew
+  #   register: brew_installed
 
   - name: Ensure Homebrew is installed
     shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > ~/brewlog.txt
-    when: brew_installed.stat.exists == false
+    args:
+      creates: /usr/local/bin/brew
+#    when: brew_installed.stat.exists == false
 
   - name: Update Homebrew
     homebrew:
