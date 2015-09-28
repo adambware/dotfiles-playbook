@@ -11,9 +11,10 @@
   #   register: brew_installed
 
   - name: Ensure Homebrew is installed
-    command: ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
-    args:
-      creates: /usr/local/bin/brew
+    shell: >
+      ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+      creates=/usr/local/bin/brew
+      
 #    when: brew_installed.stat.exists == false
 
   - name: Update Homebrew
