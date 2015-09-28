@@ -12,7 +12,8 @@
     register: current_shell
 
   - name: Adding brew'd zsh to /etc/shells
-    sudo: yes
+    become: yes
+    become_method: sudo
     remote_user: "{{ main_username }}"
     lineinfile:
       dest=/etc/shells
