@@ -13,7 +13,7 @@
 
   - name: Adding brew'd zsh to /etc/shells
     sudo: yes
-    remote_user: "{{ mac_username }}"
+    remote_user: "{{ main_username }}"
     lineinfile:
       dest=/etc/shells
       line="/usr/local/bin/zsh"
@@ -21,7 +21,7 @@
       current_shell.stdout != '/usr/local/bin/zsh'
 
   - name: Setting brew'd zsh as default shell
-    remote_user: "{{ mac_username }}"
+    remote_user: "{{ main_username }}"
     shell: chsh -s /usr/local/bin/zsh
     when:
       current_shell.stdout != '/usr/local/bin/zsh'
