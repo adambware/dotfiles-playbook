@@ -1,7 +1,7 @@
 ---
 # tasks file for adambware.zsh
 
-  - name: Install zsh via homebrew
+  - name: Ensure zsh is installed via homebrew
     homebrew:
       name=zsh
       state=present
@@ -11,7 +11,7 @@
     shell: echo $SHELL
     register: current_shell
 
-  - name: Adding brew'd zsh to /etc/shells
+  - name: Ensure brew'd zsh added to /etc/shells
     become: yes
     become_method: sudo
     remote_user: "{{ main_username }}"
@@ -21,8 +21,12 @@
     when:
       current_shell.stdout != '/usr/local/bin/zsh'
 
-  - name: Setting brew'd zsh as default shell
+  - name: Ensure brew'd zsh set as default shell
     remote_user: "{{ main_username }}"
     shell: chsh -s /usr/local/bin/zsh
     when:
       current_shell.stdout != '/usr/local/bin/zsh'
+
+  - name: Ensure oh-my-zsh is installed
+    shell: sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+      creates=~/.oh-my-zsh
