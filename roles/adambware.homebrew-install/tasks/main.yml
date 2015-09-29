@@ -7,7 +7,7 @@
 #    when: brew_installed.stat.exists == false
 
   - name: Ensure Homebrew is installed
-    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" > ~/brewlog.txt
+    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
       creates=/usr/local/bin/brew
 
   - name: Update Homebrew
