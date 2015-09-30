@@ -30,3 +30,15 @@
   - name: Ensure oh-my-zsh is installed
     shell: sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
       creates=~/.oh-my-zsh
+
+  - name: Deploy .zshrc
+    copy:
+      src=roles/adambware.zsh/files/zshrc.in
+      dest=~/.zshrc
+      owner={{ main_username }}
+
+  - name: Deploy adambware.zsh-theme
+    copy:
+      src=roles/adambware.zsh/files/adambware.zsh-theme.in
+      dest=~/.oh-my-zsh/custom/adambware.zsh-theme
+      owner={{ main_username }}
