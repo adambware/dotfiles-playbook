@@ -1,0 +1,97 @@
+#
+# History Settings
+#
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+
+#
+# ZSH Settings
+#
+setopt NO_BG_NICE       # don't nice background tasks
+setopt NO_CHECK_JOBS    # don't warn about bg tasks when exiting
+setopt NO_HUP           # and don't kill them either
+setopt NO_LIST_BEEP     # don't beep on ambiguous completion
+setopt LOCAL_OPTIONS    # allow functions to have local options
+setopt LOCAL_TRAPS      # allow functions to have local traps
+setopt PROMPT_SUBST     # parameter, command, and arithmetic substitutions
+setopt CORRECT          # try to correct command spelling
+setopt COMPLETE_IN_WORD # cursor stays, do completion from both ends
+setopt IGNORE_EOF       # don't exit on EOF
+setopt COMPLETE_ALIASES # don't expand aliases _before_ completion has finished
+
+setopt HIST_VERIFY            # don't execute history line directly
+setopt SHARE_HISTORY          # share history between sessions
+setopt EXTENDED_HISTORY       # add timestamps to history
+setopt APPEND_HISTORY         # adds history
+setopt INC_APPEND_HISTORY     # adds history incrementally and share it across sessions
+setopt HIST_IGNORE_ALL_DUPS   # don't record dupes in history
+setopt HIST_REDUCE_BLANKS     # remove extra blanks
+
+
+#
+# Aliases
+#
+##
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+##
+alias lsa='ls -lah'
+alias l='ls -lah'
+alias ll='ls -lh'
+alias la='ls -lAh'
+##
+alias df='df -h'
+alias du='du -h -c'
+alias mkdir='mkdir -p -v'
+alias cd..='cd ..'
+alias ..='cd ..'
+##
+alias ping='ping -c 5'
+alias more='less'
+##
+alias viz='vi ~/.zshrc'
+alias vioz='vi ~/.oh-my-zsh/oh-my-zsh.sh'
+alias viozt='vi ~/.oh-my-zsh/custom/adambware.zsh-theme'
+##
+alias java='/Library/Internet\ Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/java'
+alias reload!='. ~/.zshrc'
+
+
+#
+# Completion
+#
+# matches case insensitive for lowercase
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# pasting with tabs doesn't perform completion
+zstyle ':completion:*' insert-tab pending
+
+
+#
+# Oh My Zsh
+#
+## Custom Theme
+ZSH_THEME="adambware"
+## Update Frequency
+export UPDATE_ZSH_DAYS=7
+## Waiting Dots
+COMPLETION_WAITING_DOTS="true"
+## Plugins
+plugins=(git osx)
+
+
+#
+# Environment
+#
+export PAGER=less
+export EDITOR=vim
+export JAVA_HOME="$(/usr/libexec/java_home)"
+
+
+#
+# Path
+#
+export PATH="/usr/local/bin:/usr/local/var/rbenv/shims:$HOME/.node/bin:/usr/local/heroku/bin:/usr/bin:/bin:/usr/sbin:/sbin"
