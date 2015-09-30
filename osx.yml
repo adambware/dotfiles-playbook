@@ -3,7 +3,8 @@
     hosts: 127.0.0.1
     connection: local
     gather_facts: no
-    vars_files: vars/main.yml
+    vars_files:
+      - vars/main.yml
     roles:
       - adambware.homebrew-install
 
@@ -11,7 +12,8 @@
     hosts: 127.0.0.1
     connection: local
     gather_facts: no
-    vars_files: vars/main.yml
+    vars_files:
+      - vars/main.yml
     roles:
       - adambware.zsh
 
@@ -19,7 +21,8 @@
     hosts: 127.0.0.1
     connection: local
     gather_facts: no
-    vars_files: vars/main.yml
+    vars_files:
+      - vars/main.yml
     roles:
       - adambware.homebrew-packages
 
@@ -27,7 +30,8 @@
     hosts: 127.0.0.1
     connection: local
     gather_facts: no
-    vars_files: vars/main.yml
+    vars_files:
+      - vars/main.yml
     roles:
       - adambware.homebrew-casks
 
@@ -35,7 +39,8 @@
     hosts: 127.0.0.1
     connection: local
     gather_facts: no
-    vars_files: vars/main.yml
+    vars_files:
+      - vars/main.yml
     roles:
       - adambware.ruby
 
@@ -43,7 +48,8 @@
     hosts: 127.0.0.1
     connection: local
     gather_facts: no
-    vars_files: vars/main.yml
+    vars_files:
+      - vars/main.yml
     roles:
       - adambware.node
 
@@ -51,13 +57,15 @@
     hosts: 127.0.0.1
     connection: local
     gather_facts: no
-    vars_files: vars/main.yml
+    vars_files:
+      - vars/main.yml
     roles:
       - adambware.osx
 
   - name: "Install Private Things"
     hosts: 127.0.0.1
     connection: local
-    vars_files: vars/main.yml
+    vars_files:
+      - vars/main.yml
     roles:
       - adambware.private
