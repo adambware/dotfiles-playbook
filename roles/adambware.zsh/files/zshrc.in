@@ -95,3 +95,17 @@ export JAVA_HOME="$(/usr/libexec/java_home)"
 # Path
 #
 export PATH="/usr/local/bin:/usr/local/var/rbenv/shims:$HOME/.node/bin:/usr/local/heroku/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
+
+#
+# Setup rbenv
+#
+RBENV_ROOT=/usr/local/var/rbenv
+if which rbenv > /dev/null; then eval "$(rbenv init - zsh --no-rehash)"; fi
+
+
+#
+# Source oh-my-zsh
+#
+export ZSH=~/.oh-my-zsh
+source $ZSH/oh-my-zsh.sh
