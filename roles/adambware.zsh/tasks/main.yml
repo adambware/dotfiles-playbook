@@ -31,10 +31,34 @@
     shell: sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
       creates=~/.oh-my-zsh
 
-  - name: Deploy .zshrc
+  - name: Deploy zsh config
     copy:
-      src=roles/adambware.zsh/files/zshrc.in
-      dest=~/.zshrc
+      src=roles/adambware.zsh/files/config.zsh.in
+      dest=~/.oh-my-zsh/custom/config.zsh
+      owner={{ main_username }}
+
+  - name: Deploy oh-my-zsh config
+    copy:
+      src=roles/adambware.zsh/files/ohmyzsh.zsh.in
+      dest=~/.oh-my-zsh/custom/ohmyzsh.zsh
+      owner={{ main_username }}
+
+  - name: Deploy aliases
+    copy:
+      src=roles/adambware.zsh/files/aliases.zsh.in
+      dest=~/.oh-my-zsh/custom/aliases.zsh
+      owner={{ main_username }}
+
+  - name: Deploy environment vars
+    copy:
+      src=roles/adambware.zsh/files/env.zsh.in
+      dest=~/.oh-my-zsh/custom/env.zsh
+      owner={{ main_username }}
+
+  - name: Deploy completions
+    copy:
+      src=roles/adambware.zsh/files/completion.zsh.in
+      dest=~/.oh-my-zsh/custom/completion.zsh
       owner={{ main_username }}
 
   - name: Deploy adambware.zsh-theme
