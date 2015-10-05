@@ -1,2 +1,43 @@
 ---
 # vars file for adambware.homebrew-casks
+casks:
+  - alfred
+  - atom
+  - backblaze
+  - bartender
+  - cakebrew
+  - coda
+  - codekit
+  - cyberduck
+  - diskmaker-x
+  - dropbox
+  - filezilla
+  - firefox
+  - flux
+  - google-chrome
+  - ichm
+  - imageoptim
+  - istat-menus
+  - iterm2
+  - jing
+  - little-snitch
+  - opera
+  - peepopen
+  - plug
+  - rescuetime
+  - sequel-pro
+  - shortcat
+  - skype
+  - spotify
+  - tower
+  - transmission
+  - tunnelbear
+  - unetbootin
+  - youtube-dl
+  - vlc
+  - qlcolorcode
+  - qlstephen
+  - qlmarkdown
+  - quicklook-json
+  - quicklook-csv
+  - betterzipql
