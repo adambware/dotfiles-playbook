@@ -28,4 +28,4 @@
     shell: rbenv global "{{ ruby_version }}"; rbenv rehash
 
   - name: Update to latest rubygems version
-    shell: gem update --system
+    shell: sudo gem update --system
