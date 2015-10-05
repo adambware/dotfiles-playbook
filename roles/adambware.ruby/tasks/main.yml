@@ -1,2 +1,31 @@
 ---
 # tasks file for adambware.ruby
+  - name: Set rbenv_root
+    shell: export RBENV_ROOT="{{ rbenv_root }}"
+
+  - name: Ensure rbenv is installed
+    homebrew:
+      name=rbenv
+      state=latest
+
+  - name: Init rbenv for zsh or bash
+    shell: if [[ $SHELL == "*/zsh" ]] ; then eval "$(rbenv init - zsh)" ; else eval "$(rbenv init -)" ; fi
+
+  - name: Ensure rbenv-gem-rehash is installed
+    homebrew:
+      name=rbenv-gem-rehash
+      state=latest
+
+  - name: Ensure ruby-build is installed
+    homebrew:
+      name=ruby-build
+      state=latest
+
+  - name: Install ruby
+    shell: rbenv install -s "{{ ruby_version }}"
+
+  - name: Set installed ruby as global default
+    shell: rbenv global "{{ ruby_version }}"; rbenv rehash
+
+  - name: Update to latest rubygems version
+    shell: gem update --system

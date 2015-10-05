@@ -1,2 +1,4 @@
 ---
 # vars file for adambware.ruby
+rbenv_root: "/usr/local/var/rbenv"
+ruby_version: "2.2.3"
