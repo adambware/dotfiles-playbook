@@ -22,7 +22,7 @@
 
   - name: Ensure casks are installed
     homebrew_cask:
-      tap="{{ item.item }}"
+      name="{{ item }}"
       state=present
     with_items:
       "{{ casks }}"
