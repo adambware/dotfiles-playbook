@@ -5,7 +5,6 @@ casks:
   - atom
   - backblaze
   - bartender
-  - cakebrew
   - coda
   - codekit
   - cyberduck
@@ -33,7 +32,6 @@ casks:
   - transmission
   - tunnelbear
   - unetbootin
-  - youtube-dl
   - vlc
   - qlcolorcode
   - qlstephen
