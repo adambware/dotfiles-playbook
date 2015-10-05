@@ -1,5 +1,13 @@
 ---
 # tasks file for adambware.ruby
+  - name: Ensure Homebrew is installed
+    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+      creates=/usr/local/bin/brew
+
+  - name: Update Homebrew
+    homebrew:
+      update_homebrew=yes
+
   - name: Set rbenv_root
     shell: export RBENV_ROOT="{{ rbenv_root }}"
 
