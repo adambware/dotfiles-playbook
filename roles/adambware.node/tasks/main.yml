@@ -1,2 +1,27 @@
 ---
 # tasks file for adambware.node
+  - name: Ensure Homebrew is installed
+    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+      creates=/usr/local/bin/brew
+
+  - name: Update Homebrew
+    homebrew:
+      update_homebrew=yes
+
+  - name: Install node.js without npm
+    homebrew:
+      name=node
+      state=latest
+      intall_options=without-npm
+
+  - name: Set NPM to install for user
+    shell: echo 'prefix=~/.node' >> ~/.npmrc
+
+  - name: Install NPM for user
+    shell: curl -L https://www.npmjs.org/install.sh | sh
+
+  - name: Install n (simple node version management)
+    shell: npm install -g n
+
+  - name: Install stable node under n
+    shell: n stable
