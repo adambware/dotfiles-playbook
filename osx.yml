@@ -47,7 +47,6 @@
   - name: "Install and configure node via n"
     hosts: 127.0.0.1
     connection: local
-    gather_facts: no
     vars_files:
       - vars/main.yml
     roles:
