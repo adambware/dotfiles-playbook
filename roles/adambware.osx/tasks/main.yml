@@ -1,5 +1,17 @@
 ---
 # tasks file for adambware.osx
+
+# Separate shell script into ansible commands for ansible 2.0
+# See http://docs.ansible.com/ansible/osx_defaults_module.html
   - name: Run osx_tweaks.sh
     remote_user: "{{ main_username }}"
     shell: source roles/adambware.osx/files/osx_tweaks.sh >> ~/log-osx_tweaks.log
+
+  - name: Check if atom/apm is installed
+    shell: which apm
+    register: apm
+
+  - name: Install atom packages
+    shell: apm install {{ item }}
+    with_items: {{ atom_packages }}
+    when: apm.stdout == "/usr/local/bin/apm"

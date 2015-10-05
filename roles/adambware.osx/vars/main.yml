@@ -1,2 +1,9 @@
 ---
 # vars file for adambware.osx
+atom_packages:
+  - autoclose-html
+  - color-picker
+  - project-manager
+  - Sublime-Style-Column-Selection
+  - unity-ui
+  - vim-mode
