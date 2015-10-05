@@ -12,7 +12,7 @@
     homebrew:
       name=node
       state=latest
-      intall_options=without-npm
+      install_options=without-npm
 
   - name: Set NPM to install for user
     shell: echo 'prefix=~/.node' >> ~/.npmrc
