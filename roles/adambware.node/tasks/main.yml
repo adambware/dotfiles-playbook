@@ -19,12 +19,14 @@
 
   - name: Install NPM for user
     shell: curl -L https://www.npmjs.org/install.sh | sh
+      creates=~/.node/bin/npm
 
   - name: Include user's node in PATH
     shell: export PATH="~/.node/bin:$PATH"
 
   - name: Install n (simple node version management)
     shell: npm install -g n
+      creates=~/.node/bin/n
 
   - name: Install stable node under n
     shell: n stable
