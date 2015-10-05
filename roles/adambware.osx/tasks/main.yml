@@ -9,9 +9,9 @@
 
   - name: Check if atom/apm is installed
     shell: which apm
-    register: apm
+    register: apm_result
 
   - name: Install atom packages
     shell: apm install {{ item }}
     with_items: {{ atom_packages }}
-    when: apm.stdout == "/usr/local/bin/apm"
+    when: apm_result.stdout == "/usr/local/bin/apm"
