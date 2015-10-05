@@ -21,8 +21,5 @@
       state=latest
 
   - name: Ensure casks are installed
-    homebrew_cask:
-      name="{{ item }}"
-      state=present
-    with_items:
-      "{{ casks }}"
+    shell: brew cask install --appdir="/Applications" {{ item }}
+    with_items: "{{ casks }}"
