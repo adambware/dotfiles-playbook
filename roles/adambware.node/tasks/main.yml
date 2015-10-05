@@ -22,7 +22,7 @@
       creates=~/.node/bin/npm
 
   - name: Include user's node in PATH
-    shell: export PATH="~/.node/bin:$PATH"
+    shell: export PATH="$HOME/.node/bin:$PATH"
 
   - name: Install n (simple node version management)
     shell: npm install -g n
