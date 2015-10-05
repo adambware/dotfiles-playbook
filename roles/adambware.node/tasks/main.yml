@@ -23,11 +23,11 @@
 
   - name: Install n (simple node version management)
     environment:
-      PATH: "{{ ansible_env.PATH }}:~/.node/bin"
+      PATH: "~/.node/bin:{{ ansible_env.PATH }}"
     shell: npm install -g n
       creates=~/.node/bin/n
 
   - name: Install stable node under n
     environment:
-      PATH: "{{ ansible_env.PATH }}:~/.node/bin"
+      PATH: "~/.node/bin:{{ ansible_env.PATH }}"
     shell: n stable
