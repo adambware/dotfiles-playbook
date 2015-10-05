@@ -10,10 +10,6 @@
     shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
       creates=/usr/local/bin/brew
 
-  - name: Update Homebrew
-    homebrew:
-      update_homebrew=yes
-
   - name: Tap Kegs
     homebrew_tap:
       tap="{{ item }}"
