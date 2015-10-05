@@ -31,6 +31,7 @@
 
   - name: Install ruby
     shell: rbenv install -s "{{ ruby_version }}"
+      creates={{ rbenv_root }}/versions/{{ ruby_version }}
 
   - name: Set installed ruby as global default
     shell: rbenv global "{{ ruby_version }}"; rbenv rehash
