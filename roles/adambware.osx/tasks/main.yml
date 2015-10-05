@@ -1,2 +1,5 @@
 ---
 # tasks file for adambware.osx
+  - name: Run osx_tweaks.sh
+    remote_user: "{{ main_username }}"
+    shell: source roles/adambware.osx/files/osx_tweaks.sh >> ~/log-osx_tweaks.log
