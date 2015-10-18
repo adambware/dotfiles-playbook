@@ -4,6 +4,8 @@
 # Separate shell script into ansible commands for ansible 2.0
 # See http://docs.ansible.com/ansible/osx_defaults_module.html
   - name: Run osx_tweaks.sh
+    become: yes
+    become_method: sudo
     remote_user: "{{ main_username }}"
     shell: source roles/adambware.osx/files/osx_tweaks.sh >> ~/log-osx_tweaks.log
 
