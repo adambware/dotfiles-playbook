@@ -37,4 +37,7 @@
     shell: rbenv global "{{ ruby_version }}"; rbenv rehash
 
   - name: Update to latest rubygems version
-    shell: sudo gem update --system
+    become: yes
+    become_method: sudo
+    remote_user: "{{ main_username }}"
+    shell: gem update --system
