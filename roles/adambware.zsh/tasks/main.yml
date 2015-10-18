@@ -7,9 +7,9 @@
       state=present
       install_options=disable-etcdir
 
-  - name: Checking current shell
-    shell: echo $SHELL
-    register: current_shell
+  - name: Checking default shell
+    shell: dscl . -read /Users/{{ main_username }} UserShell | awk '{print $2}'
+    register: default_shell
 
   - name: Ensure brew'd zsh added to /etc/shells
     become: yes
@@ -19,13 +19,13 @@
       dest=/etc/shells
       line="/usr/local/bin/zsh"
     when:
-      current_shell.stdout != '/usr/local/bin/zsh'
+      default_shell.stdout != '/usr/local/bin/zsh'
 
   - name: Ensure brew'd zsh set as default shell
     remote_user: "{{ main_username }}"
     shell: chsh -s /usr/local/bin/zsh
     when:
-      current_shell.stdout != '/usr/local/bin/zsh'
+      default_shell.stdout != '/usr/local/bin/zsh'
 
   - name: Ensure oh-my-zsh is installed
     shell: sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
