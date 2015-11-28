@@ -5,7 +5,7 @@
     homebrew:
       name=zsh
       state=present
-      install_options=disable-etcdir
+      install_options=without-etcdir
 
   - name: Checking default shell
     shell: dscl . -read /Users/{{ main_username }} UserShell | awk '{print $2}'
