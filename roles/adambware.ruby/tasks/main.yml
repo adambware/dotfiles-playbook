@@ -8,9 +8,9 @@
     homebrew:
       update_homebrew=yes
 
- - name: Check rbenv_root
-   shell: echo $RBENV_ROOT
-   register: env_rbenv_root
+  - name: Check rbenv_root
+    shell: echo $RBENV_ROOT
+    register: env_rbenv_root
 
   - name: Ensure rbenv_root is set
     shell: export RBENV_ROOT="{{ rbenv_root }}"
