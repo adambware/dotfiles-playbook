@@ -15,7 +15,7 @@
   - name: Ensure rbenv_root is set
     shell: export RBENV_ROOT="{{ rbenv_root }}"
     when:
-      env_rbenv_root.stdout != {{ rbenv_root }}
+      env_rbenv_root.stdout != "{{ rbenv_root }}"
 
   - name: Ensure rbenv is installed
     homebrew:
