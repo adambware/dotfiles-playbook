@@ -25,11 +25,6 @@
   - name: Init rbenv for zsh or bash
     shell: if [[ $SHELL == "*/zsh" ]] ; then eval "$(rbenv init - zsh)" ; else eval "$(rbenv init -)" ; fi
 
-  - name: Ensure rbenv-gem-rehash is installed
-    homebrew:
-      name=rbenv-gem-rehash
-      state=latest
-
   - name: Ensure ruby-build is installed
     homebrew:
       name=ruby-build
