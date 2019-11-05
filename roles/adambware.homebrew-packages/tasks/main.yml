@@ -27,8 +27,3 @@
     homebrew:
       name=youtube-dl
       state=latest
-
-  - name: Ensure Google Cloud SDK is installed
-    homebrew:
-      name=google-cloud-sdk
-      state=latest

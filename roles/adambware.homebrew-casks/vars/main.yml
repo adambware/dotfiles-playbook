@@ -11,6 +11,7 @@ casks:
   - filezilla
   - firefox
   - google-chrome
+  - google-cloud-sdk
   - imageoptim
   - istat-menus
   - iterm2
