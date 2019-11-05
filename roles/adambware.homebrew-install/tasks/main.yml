@@ -8,7 +8,8 @@
 
   - name: Ensure Homebrew is installed
     shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      creates=/usr/local/bin/brew
+    args:
+      creates: /usr/local/bin/brew
 
   - name: Tap Kegs
     homebrew_tap:
