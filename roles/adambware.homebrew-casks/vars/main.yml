@@ -6,7 +6,6 @@ casks:
   - bartender
   - coda
   - cyberduck
-  - filezilla
   - firefox
   - google-chrome
   - google-cloud-sdk
