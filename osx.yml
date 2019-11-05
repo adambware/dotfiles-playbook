@@ -2,7 +2,7 @@
   - name: "Install Homebrew"
     hosts: 127.0.0.1
     connection: local
-    gather_facts: no
+    gather_facts: false
     vars_files:
       - vars/main.yml
     roles:
@@ -11,7 +11,7 @@
   - name: "Install and configure zsh and oh-my-zsh"
     hosts: 127.0.0.1
     connection: local
-    gather_facts: no
+    gather_facts: false
     vars_files:
       - vars/main.yml
     roles:
@@ -20,7 +20,7 @@
   - name: "Install Homebrew Packages"
     hosts: 127.0.0.1
     connection: local
-    gather_facts: no
+    gather_facts: false
     vars_files:
       - vars/main.yml
     roles:
@@ -29,7 +29,7 @@
   - name: "Install Homebrew Caskroom Casks"
     hosts: 127.0.0.1
     connection: local
-    gather_facts: no
+    gather_facts: false
     vars_files:
       - vars/main.yml
     roles:
@@ -38,7 +38,7 @@
   - name: "Install and configure python via pyenv"
     hosts: 127.0.0.1
     connection: local
-    gather_facts: no
+    gather_facts: false
     vars_files:
       - vars/main.yml
     roles:
@@ -47,7 +47,7 @@
   - name: "Install and configure ruby via rbenv"
     hosts: 127.0.0.1
     connection: local
-    gather_facts: no
+    gather_facts: false
     vars_files:
       - vars/main.yml
     roles:
@@ -64,7 +64,7 @@
   - name: "Install OS X Tweaks"
     hosts: 127.0.0.1
     connection: local
-    gather_facts: no
+    gather_facts: false
     vars_files:
       - vars/main.yml
     roles:
