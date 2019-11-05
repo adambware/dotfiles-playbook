@@ -3,9 +3,12 @@
 #
 ## Custom Theme
 ZSH_THEME="adambware"
+
 ## Update Frequency
 export UPDATE_ZSH_DAYS=7
+
 ## Waiting Dots
 COMPLETION_WAITING_DOTS="true"
+
 ## Plugins
 plugins=(git osx brew vagrant)
