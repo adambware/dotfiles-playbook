@@ -8,18 +8,6 @@
     homebrew:
       update_homebrew=yes
 
-  - name: Ensure caskroom is tapped
-    homebrew_tap:
-      tap="{{ item }}"
-      state=present
-    with_items:
-      - caskroom/cask
-
-  - name: Ensure brew-cask is installed and up to date
-    homebrew:
-      name=brew-cask
-      state=latest
-
   - name: Ensure casks are installed
     shell: brew cask install --appdir="/Applications" {{ item }}
       creates=/opt/homebrew-cask/Caskroom/{{ item }}
