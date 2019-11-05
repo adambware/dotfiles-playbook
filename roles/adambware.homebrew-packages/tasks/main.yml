@@ -8,9 +8,9 @@
     homebrew:
       update_homebrew=yes
 
-  - name: Ensure Python is installed
+  - name: Ensure Pyenv is installed
     homebrew:
-      name=python
+      name=pyenv
       state=latest
 
   - name: Ensure The Silver Searcher (ag) is installed
