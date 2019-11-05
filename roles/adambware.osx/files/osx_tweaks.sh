@@ -4,6 +4,10 @@ fancy_echo() {
   printf "\n%b\n" "$1"
 }
 
+# Close any open System Preferences panes, to prevent them from overriding
+# settings we’re about to change
+osascript -e 'tell application "System Preferences" to quit'
+
 # Ask for the administrator password upfront
 sudo -v
 
@@ -93,8 +97,8 @@ fancy_echo "Enable full keyboard access for all controls"
 fancy_echo "Disable auto-correct"
 	defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
-fancy_echo "Stop iTunes from responding to the keyboard media keys"
-	launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/null
+# fancy_echo "Stop iTunes from responding to the keyboard media keys"
+#	 launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/null
 
 
 ###############################################################################
@@ -111,8 +115,11 @@ fancy_echo "Save screenshots to the desktop"
 fancy_echo "Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)"
 	defaults write com.apple.screencapture type -string "png"
 
+fancy_echo "Disable shadow in screenshots"
+  defaults write com.apple.screencapture disable-shadow -bool true
+
 fancy_echo "Enable subpixel font rendering on non-Apple LCDs"
-	defaults write NSGlobalDomain AppleFontSmoothing -int 2
+	defaults write NSGlobalDomain AppleFontSmoothing -int 1
 
 
 ###############################################################################
@@ -157,8 +164,9 @@ fancy_echo "Enable spring loading for directories"
 #fancy_echo "Remove the spring loading delay for directories"
 #	defaults write NSGlobalDomain com.apple.springing.delay -float 0
 
-fancy_echo "Avoid creating .DS_Store files on network volumes"
+fancy_echo "Avoid creating .DS_Store files on network or USB volumes"
 	defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+  defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 fancy_echo "Automatically open a new Finder window when a volume is mounted"
 	defaults write com.apple.frameworks.diskimages auto-open-ro-root -bool true
@@ -177,6 +185,9 @@ fancy_echo "Enable the MacBook Air SuperDrive on any Mac"
 
 fancy_echo "Show the ~/Library folder"
 	chflags nohidden ~/Library
+
+fancy_echo "Show the /Volumes folder"
+	sudo chflags nohidden /Volumes
 
 fancy_echo "Expand the following File Info panes:"
 fancy_echo "“General”, “Open with”, and “Sharing & Permissions”"
@@ -277,6 +288,9 @@ fancy_echo "Only use UTF-8 in Terminal.app"
 #fancy_echo "Install the Solarized Dark theme for iTerm"
 #	open "${HOME}/init/Solarized Dark.itermcolors"
 
+fancy_echo "Disable the annoying line marks"
+  defaults write com.apple.Terminal ShowLineMarks -int 0
+
 fancy_echo "Don’t display the annoying prompt when quitting iTerm"
 	defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 
@@ -336,11 +350,19 @@ fancy_echo "Enable the WebKit Developer Tools in the Mac App Store"
 
 
 ###############################################################################
+# Photos                                                                      #
+###############################################################################
+
+fancy_echo "Prevent Photos from opening automatically when devices are plugged in"
+defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
+
+
+###############################################################################
 # Messages                                                                    #
 ###############################################################################
 
-fancy_echo "Disable automatic emoji substitution (i.e. use plain text smileys)"
-	defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
+#fancy_echo "Disable automatic emoji substitution (i.e. use plain text smileys)"
+#	defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
 
 fancy_echo "Disable continuous spell checking"
 	defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
@@ -353,6 +375,14 @@ fancy_echo "Starting Chrome Tweaks"
 
 fancy_echo "Allow installing user scripts via GitHub Gist or Userscripts.org"
 	defaults write com.google.Chrome ExtensionInstallSources -array "https://gist.githubusercontent.com/" "http://userscripts.org/*"
+
+fancy_echo "Use the system-native print preview dialog"
+  defaults write com.google.Chrome DisablePrintPreview -bool true
+  defaults write com.google.Chrome.canary DisablePrintPreview -bool true
+  
+fancy_echo "Expand the print dialog by default"
+  defaults write com.google.Chrome PMPrintingExpandedStateForPrint2 -bool true
+  defaults write com.google.Chrome.canary PMPrintingExpandedStateForPrint2 -bool true
 
 #fancy_echo "Disable the all too sensitive backswipe"
 #	defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
@@ -374,5 +404,28 @@ fancy_echo "Hide the donate message"
 fancy_echo "Hide the legal disclaimer"
 	defaults write org.m0k.transmission WarningLegal -bool false
 
+
+###############################################################################
+# Kill affected applications                                                  #
+###############################################################################
+
+for app in "Activity Monitor" \
+	"Address Book" \
+	"Calendar" \
+	"cfprefsd" \
+	"Contacts" \
+	"Dock" \
+	"Finder" \
+	"Google Chrome" \
+	"Mail" \
+	"Messages" \
+	"Photos" \
+	"Safari" \
+	"SystemUIServer" \
+	"Terminal" \
+	"Transmission" \
+	"iCal"; do
+	killall "${app}" &> /dev/null
+done
 
 fancy_echo "Done. You should reboot now."
