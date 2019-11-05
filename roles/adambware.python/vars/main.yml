@@ -1,4 +1,4 @@
 ---
 # vars file for adambware.python
-pyenv_root: "/Users/adamboulware/.pyenv" # no trailing slash!
+pyenv_root: "/Users/{{ main_username }}/.pyenv" # no trailing slash!
 python_version: "3.8.0"
