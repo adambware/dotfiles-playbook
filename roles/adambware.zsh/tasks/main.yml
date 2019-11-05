@@ -3,9 +3,9 @@
 
   - name: Ensure zsh is installed via homebrew
     homebrew:
-      name=zsh
-      state=present
-      install_options=without-etcdir
+      name: zsh
+      state: present
+      install_options: without-etcdir
 
   - name: Checking default shell
     shell: dscl . -read /Users/{{ main_username }} UserShell | awk '{print $2}'
