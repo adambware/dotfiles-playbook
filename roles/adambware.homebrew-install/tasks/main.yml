@@ -18,5 +18,4 @@
       - homebrew/binary
       - homebrew/completions
       - homebrew/dupes
-      - homebrew/versions
       - caskroom/cask
