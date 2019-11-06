@@ -10,9 +10,9 @@
 
   - name: Install node.js without npm
     homebrew:
-      name=node
-      state=latest
-      install_options=without-npm
+      name: node
+      state: latest
+      install_options: "without-npm"
 
   - name: Set NPM to install for user
     shell: echo 'prefix=~/.node' >> ~/.npmrc
