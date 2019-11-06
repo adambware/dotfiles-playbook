@@ -14,7 +14,7 @@
       state=latest
 
   - name: Init pyenv for zsh or bash
-    shell: if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi
+    shell: if command -v pyenv 1>/dev/null 2>&1; then eval "$(pyenv init -)"; fi
 
   - name: Install python
     shell: pyenv install "{{ python_version }}"
