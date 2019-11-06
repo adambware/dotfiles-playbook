@@ -4,8 +4,10 @@ casks:
   - alfred
   - atom
   - bartender
+  - boostnote
   - coda
   - cyberduck
+  - dash
   - firefox
   - google-chrome
   - google-cloud-sdk
@@ -13,14 +15,18 @@ casks:
   - iterm2
   - opera
   - plug
+  - private-internet-access
   - sequel-pro
+  - sketch
   - skype
   - spotify
   - tower
   - transmission
   - transmit
+  - visual-studio-code
   - vlc
   - qlcolorcode
+  - qlimagesize
   - qlstephen
   - qlmarkdown
   - quicklook-json
