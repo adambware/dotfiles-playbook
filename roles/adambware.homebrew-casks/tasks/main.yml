@@ -8,7 +8,13 @@
     homebrew:
       update_homebrew=yes
 
+#  - name: Ensure casks are installed
+#    shell: brew cask install --appdir="/Applications" {{ item }}
+#      creates=/opt/homebrew-cask/Caskroom/{{ item }}
+#    with_items: "{{ casks }}"
+
   - name: Ensure casks are installed
-    shell: brew cask install --appdir="/Applications" {{ item }}
-      creates=/opt/homebrew-cask/Caskroom/{{ item }}
+    homebrew_cask: 
+      name: {{ item }}
+      install_options: appdir="/Applications"
     with_items: "{{ casks }}"
