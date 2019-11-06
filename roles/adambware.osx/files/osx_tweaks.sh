@@ -60,8 +60,8 @@ fancy_echo "Check for software updates daily, not just once per week"
 # SSD-specific tweaks                                                         #
 ###############################################################################
 
-fancy_echo "Disable local Time Machine backups"
-	hash tmutil &> /dev/null && sudo tmutil disablelocal
+#fancy_echo "Disable local Time Machine backups"
+#	hash tmutil &> /dev/null && sudo tmutil disablelocal
 
 fancy_echo "Disable hibernation (speeds up entering sleep mode)"
 	sudo pmset -a hibernatemode 0
