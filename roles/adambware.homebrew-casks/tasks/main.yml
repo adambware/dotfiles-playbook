@@ -14,7 +14,7 @@
 #    with_items: "{{ casks }}"
 
   - name: Ensure casks are installed
-    homebrew_cask: 
-      name: {{ item }}
+    homebrew_cask:
+      name: "{{ item }}"
       install_options: appdir="/Applications"
     with_items: "{{ casks }}"
