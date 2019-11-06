@@ -401,8 +401,9 @@ fancy_echo "Trash original torrent files"
 
 fancy_echo "Hide the donate message"
 	defaults write org.m0k.transmission WarningDonate -bool false
-fancy_echo "Hide the legal disclaimer"
-	defaults write org.m0k.transmission WarningLegal -bool false
+
+#fancy_echo "Hide the legal disclaimer"
+#	defaults write org.m0k.transmission WarningLegal -bool false
 
 
 ###############################################################################
