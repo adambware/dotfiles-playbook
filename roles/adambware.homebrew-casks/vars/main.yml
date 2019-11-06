@@ -18,10 +18,10 @@ casks:
   - spotify
   - tower
   - transmission
+  - transmit
   - vlc
   - qlcolorcode
   - qlstephen
   - qlmarkdown
   - quicklook-json
   - quicklook-csv
-  - betterzipql
