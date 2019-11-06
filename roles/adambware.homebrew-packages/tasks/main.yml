@@ -8,22 +8,7 @@
     homebrew:
       update_homebrew=yes
 
-  - name: Ensure Pyenv is installed
+  - name: Ensure Pyenv, ag, wget, and youtube downloader are installed
     homebrew:
-      name=pyenv
-      state=latest
-
-  - name: Ensure The Silver Searcher (ag) is installed
-    homebrew:
-      name=the_silver_searcher
-      state=latest
-
-  - name: Ensure wget is installed
-    homebrew:
-      name=wget
-      state=latest
-
-  - name: Ensure youtube downloader is installed
-    homebrew:
-      name=youtube-dl
-      state=latest
+      name=pyenv,the_silver_searcher,wget,youtube-dl
+      state=present
