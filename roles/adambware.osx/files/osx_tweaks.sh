@@ -69,11 +69,11 @@ fancy_echo "Disable hibernation (speeds up entering sleep mode)"
 if [ -f "/private/var/vm/sleepimage" ]; then
 	fancy_echo "Remove the sleep image file to save disk space"
 		sudo rm /private/var/vm/sleepimage
-else
-  fancy_echo "Create a zero-byte file instead…"
-	  sudo touch /private/var/vm/sleepimage
-  fancy_echo "…and make sure it can’t be rewritten"
-  	sudo chflags uchg /private/var/vm/sleepimage
+#else
+#  fancy_echo "Create a zero-byte file instead…"
+#	  sudo touch /private/var/vm/sleepimage
+#  fancy_echo "…and make sure it can’t be rewritten"
+#  	sudo chflags uchg /private/var/vm/sleepimage
 fi
 
 #fancy_echo "Disable the sudden motion sensor as it’s not useful for SSDs"
