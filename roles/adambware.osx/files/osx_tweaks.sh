@@ -180,8 +180,8 @@ fancy_echo "Use list view in all Finder windows by default"
 fancy_echo "Disable the warning before emptying the Trash"
 	defaults write com.apple.finder WarnOnEmptyTrash -bool false
 
-fancy_echo "Enable the MacBook Air SuperDrive on any Mac"
-	sudo nvram boot-args="mbasd=1"
+#fancy_echo "Enable the MacBook Air SuperDrive on any Mac"
+#	sudo nvram boot-args="mbasd=1"
 
 fancy_echo "Show the ~/Library folder"
 	chflags nohidden ~/Library
