@@ -1,38 +1,47 @@
-Role Name
-=========
+# Role: adambware.python
 
-A brief description of the role goes here.
+Installs Python via pyenv with support for managing multiple Python versions.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- macOS (Big Sur or later)
+- Homebrew installed (provided by adambware.homebrew-install role)
+- Ansible 2.10+
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Available variables are listed below, along with default values:
 
-Dependencies
-------------
+```yaml
+# Python version to install
+python_version: "3.12.0"
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+# Path to pyenv installation
+pyenv_root: "{{ ansible_env.HOME }}/.pyenv"
 
-Example Playbook
-----------------
+# Common Python packages to install
+python_packages:
+  - ipython
+  - jupyter
+  - black
+  - flake8
+  # etc.
+```
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Example
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+- hosts: localhost
+  roles:
+    - role: adambware.python
+```
 
-License
--------
+## Notes
 
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+- Installs Python via Homebrew for system-wide use
+- Also installs pyenv for managing multiple Python versions
+- Sets up pyenv in your shell configuration
+- Installs the specified Python version via pyenv
+- Sets the installed version as the global default
+- Updates pip to the latest version
+- Installs common Python packages

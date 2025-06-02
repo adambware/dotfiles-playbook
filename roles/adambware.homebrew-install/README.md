@@ -1,38 +1,36 @@
-Role Name
-=========
+# Role: adambware.homebrew-install
 
-A brief description of the role goes here.
+Installs Homebrew package manager on macOS with support for both Intel and Apple Silicon Macs.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- macOS (Big Sur or later)
+- Ansible 2.10+
+- Administrator access
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Available variables are listed below:
 
-Dependencies
-------------
+```yaml
+# These are typically set in the main vars file:
+is_apple_silicon: "{{ ansible_architecture == 'arm64' }}"
+homebrew_prefix: "{{ '/opt/homebrew' if is_apple_silicon else '/usr/local' }}"
+homebrew_bin: "{{ homebrew_prefix }}/bin"
+homebrew_brew_bin: "{{ homebrew_bin }}/brew"
+```
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Example
 
-Example Playbook
-----------------
+```yaml
+- hosts: localhost
+  roles:
+    - role: adambware.homebrew-install
+```
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Notes
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+- The role automatically detects the Mac architecture (Intel vs Apple Silicon)
+- For Apple Silicon Macs, Homebrew is installed to `/opt/homebrew`
+- For Intel Macs, Homebrew is installed to `/usr/local`
+- The role adds Homebrew to your PATH via `.zshrc` for Apple Silicon Macs

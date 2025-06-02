@@ -1,2 +1,49 @@
 ---
 # defaults file for adambware.homebrew-casks
+
+# Homebrew casks to install
+casks:
+  # Utilities
+  - alfred
+  - bartender
+  - rectangle
+  - iterm2
+  - the-unarchiver
+  - stats
+  - raycast
+  
+  # Browsers
+  - firefox
+  - google-chrome
+  - brave-browser
+  
+  # Development
+  - visual-studio-code
+  - github
+  - docker
+  - postman
+  - tableplus
+  - figma
+  
+  # Cloud tools
+  - google-cloud-sdk
+  - aws-vault
+  
+  # Communication & Productivity
+  - slack
+  - zoom
+  - discord
+  - notion
+  
+  # Media
+  - spotify
+  - vlc
+  
+  # QuickLook plugins
+  - qlmarkdown
+  - quicklook-json
+  
+  # Fonts
+  - font-fira-code
+  - font-jetbrains-mono
+  - font-cascadia-code

@@ -1,24 +1,100 @@
 ---
 # tasks file for adambware.python
-  - name: Ensure Homebrew is installed
-    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      creates=/usr/local/bin/brew
 
-  - name: Update Homebrew
-    homebrew:
-      update_homebrew=yes
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
 
-  - name: Ensure pyenv is installed
-    homebrew:
-      name=pyenv
-      state=latest
+- name: Install Python via Homebrew
+  community.general.homebrew:
+    name: python
+    state: present
 
-  - name: Init pyenv for zsh or bash
-    shell: if command -v pyenv 1>/dev/null 2>&1; then eval "$(pyenv init -)"; fi
+- name: Ensure pyenv is installed
+  community.general.homebrew:
+    name: pyenv
+    state: present
 
-  - name: Install python
-    shell: pyenv install "{{ python_version }}"
-      creates={{ pyenv_root }}/versions/{{ python_version }}
+- name: Check if Python version is installed
+  ansible.builtin.shell: >
+    export PYENV_ROOT="{{ pyenv_root }}" && 
+    eval "$(pyenv init --path)" && 
+    pyenv versions | grep {{ python_version }}
+  args:
+    executable: /bin/zsh
+  register: python_installed
+  changed_when: false
+  failed_when: false
 
-  - name: Set installed python as global default
-    shell: pyenv global "{{ python_version }}";
+- name: Ensure pyenv directory exists
+  ansible.builtin.file:
+    path: "{{ pyenv_root }}"
+    state: directory
+    mode: '0755'
+
+- name: Set up pyenv in shell config
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    marker: "# {mark} PYENV CONFIGURATION"
+    block: |
+      export PYENV_ROOT="{{ pyenv_root }}"
+      export PATH="$PYENV_ROOT/bin:$PATH"
+      eval "$(pyenv init --path)"
+      if command -v pyenv 1>/dev/null 2>&1; then
+        eval "$(pyenv init -)"
+      fi
+    create: yes
+
+- name: Install Python with pyenv
+  ansible.builtin.shell: >
+    export PYENV_ROOT="{{ pyenv_root }}" && 
+    export PATH="$PYENV_ROOT/bin:$PATH" && 
+    eval "$(pyenv init --path)" && 
+    pyenv install {{ python_version }}
+  args:
+    executable: /bin/zsh
+  when: python_installed.rc != 0
+
+- name: Set global Python version
+  ansible.builtin.shell: >
+    export PYENV_ROOT="{{ pyenv_root }}" && 
+    export PATH="$PYENV_ROOT/bin:$PATH" && 
+    eval "$(pyenv init --path)" && 
+    pyenv global {{ python_version }}
+  args:
+    executable: /bin/zsh
+
+- name: Update pip to latest version
+  ansible.builtin.shell: >
+    export PYENV_ROOT="{{ pyenv_root }}" && 
+    export PATH="$PYENV_ROOT/bin:$PATH" && 
+    eval "$(pyenv init --path)" && 
+    pip install --upgrade pip
+  args:
+    executable: /bin/zsh
+  register: pip_update
+  changed_when: "'Requirement already satisfied' not in pip_update.stdout"
+
+- name: Check if Python packages are installed
+  ansible.builtin.shell: >
+    export PYENV_ROOT="{{ pyenv_root }}" && 
+    export PATH="$PYENV_ROOT/bin:$PATH" && 
+    eval "$(pyenv init --path)" && 
+    pip list | grep -i "{{ item }}"
+  args:
+    executable: /bin/zsh
+  register: python_packages_check
+  changed_when: false
+  failed_when: false
+  with_items: "{{ python_packages }}"
+
+- name: Install common Python packages
+  ansible.builtin.shell: >
+    export PYENV_ROOT="{{ pyenv_root }}" && 
+    export PATH="$PYENV_ROOT/bin:$PATH" && 
+    eval "$(pyenv init --path)" && 
+    pip install {{ item.item }}
+  args:
+    executable: /bin/zsh
+  with_items: "{{ python_packages_check.results }}"
+  when: item.rc != 0

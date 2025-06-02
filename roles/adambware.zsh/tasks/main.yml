@@ -1,67 +1,90 @@
 ---
 # tasks file for adambware.zsh
 
-  - name: Ensure zsh is installed via homebrew
-    homebrew:
-      name: zsh
-      state: present
+- name: Ensure zsh is installed via homebrew
+  community.general.homebrew:
+    name: zsh
+    state: present
 
-  - name: Checking default shell
-    shell: dscl . -read /Users/{{ main_username }} UserShell | awk '{print $2}'
-    register: default_shell
+- name: Checking default shell
+  ansible.builtin.shell: dscl . -read /Users/{{ main_username }} UserShell | awk '{print $2}'
+  register: default_shell
+  changed_when: false
 
-  - name: Ensure brew'd zsh added to /etc/shells
-    become: yes
-    become_method: sudo
-    remote_user: "{{ main_username }}"
-    lineinfile:
-      dest=/etc/shells
-      line="/usr/local/bin/zsh"
-    when:
-      default_shell.stdout != '/usr/local/bin/zsh'
+- name: Ensure brew'd zsh added to /etc/shells
+  ansible.builtin.lineinfile:
+    dest: /etc/shells
+    line: "{{ zsh_path }}"
+    state: present
+  become: yes
+  when: default_shell.stdout != zsh_path
 
-  - name: Ensure brew'd zsh set as default shell
-    remote_user: "{{ main_username }}"
-    shell: chsh -s /usr/local/bin/zsh
-    when:
-      default_shell.stdout != '/usr/local/bin/zsh'
+- name: Ensure brew'd zsh set as default shell
+  ansible.builtin.user:
+    name: "{{ main_username }}"
+    shell: "{{ zsh_path }}"
+  become: yes
+  when: default_shell.stdout != zsh_path
 
-  - name: Ensure oh-my-zsh is installed
-    shell: sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-      creates=~/.oh-my-zsh
+- name: Check if Oh My Zsh is installed
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+  register: oh_my_zsh_check
 
-  - name: Deploy zsh config
-    copy:
-      src=roles/adambware.zsh/files/config.zsh.in
-      dest=~/.oh-my-zsh/custom/config.zsh
-      owner={{ main_username }}
+- name: Ensure oh-my-zsh is installed
+  ansible.builtin.shell: sh -c "$(curl -fsSL {{ oh_my_zsh_install_url }})" "" --unattended
+  when: not oh_my_zsh_check.stat.exists
 
-  - name: Deploy oh-my-zsh config
-    copy:
-      src=roles/adambware.zsh/files/ohmyzsh.zsh.in
-      dest=~/.oh-my-zsh/custom/ohmyzsh.zsh
-      owner={{ main_username }}
+- name: Create custom directory for Oh My Zsh
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh/custom"
+    state: directory
+    mode: '0755'
 
-  - name: Deploy aliases
-    copy:
-      src=roles/adambware.zsh/files/aliases.zsh.in
-      dest=~/.oh-my-zsh/custom/aliases.zsh
-      owner={{ main_username }}
+- name: Create themes directory for Oh My Zsh
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/themes"
+    state: directory
+    mode: '0755'
 
-  - name: Deploy environment vars
-    copy:
-      src=roles/adambware.zsh/files/env.zsh.in
-      dest=~/.oh-my-zsh/custom/env.zsh
-      owner={{ main_username }}
+- name: Deploy zsh config
+  ansible.builtin.copy:
+    src: config.zsh.in
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/config.zsh"
+    owner: "{{ main_username }}"
+    mode: '0644'
 
-  - name: Deploy completions
-    copy:
-      src=roles/adambware.zsh/files/completion.zsh.in
-      dest=~/.oh-my-zsh/custom/completion.zsh
-      owner={{ main_username }}
+- name: Deploy oh-my-zsh config
+  ansible.builtin.copy:
+    src: ohmyzsh.zsh.in
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/ohmyzsh.zsh"
+    owner: "{{ main_username }}"
+    mode: '0644'
 
-  - name: Deploy adambware.zsh-theme
-    copy:
-      src=roles/adambware.zsh/files/adambware.zsh-theme.in
-      dest=~/.oh-my-zsh/custom/adambware.zsh-theme
-      owner={{ main_username }}
+- name: Deploy aliases
+  ansible.builtin.copy:
+    src: aliases.zsh.in
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/aliases.zsh"
+    owner: "{{ main_username }}"
+    mode: '0644'
+
+- name: Deploy environment vars
+  ansible.builtin.copy:
+    src: env.zsh.in
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/env.zsh"
+    owner: "{{ main_username }}"
+    mode: '0644'
+
+- name: Deploy completions
+  ansible.builtin.copy:
+    src: completion.zsh.in
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/completion.zsh"
+    owner: "{{ main_username }}"
+    mode: '0644'
+
+- name: Deploy adambware.zsh-theme
+  ansible.builtin.copy:
+    src: adambware.zsh-theme.in
+    dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/themes/adambware.zsh-theme"
+    owner: "{{ main_username }}"
+    mode: '0644'

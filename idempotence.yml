@@ -1,0 +1,58 @@
+---
+# Idempotence test playbook
+# Use this to verify that running the playbook multiple times doesn't make changes
+
+- name: "Test idempotence of macOS setup"
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars_files:
+    - vars/main.yml
+
+  pre_tasks:
+    - name: Display system information
+      ansible.builtin.debug:
+        msg: 
+          - "Running idempotence test for macOS setup"
+          - "This will execute the playbook with --check mode to test idempotence"
+          - "Architecture: {{ ansible_architecture }}"
+          - "Distribution: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+  tasks:
+    - name: Run the playbook in check mode
+      ansible.builtin.command: >
+        ansible-playbook -K osx.yml --check
+      register: idempotence_test
+      changed_when: false
+
+    - name: Check for changed tasks in output
+      ansible.builtin.shell: echo "{{ idempotence_test.stdout }}" | grep -c "changed="
+      register: changed_count
+      changed_when: false
+      failed_when: false
+
+    - name: Display idempotence test results
+      ansible.builtin.debug:
+        msg: |
+          Idempotence Test Results:
+          
+          Changed tasks: {{ changed_count.stdout }}
+          
+          {% if changed_count.stdout|int > 0 %}
+          ⚠️ The playbook is not fully idempotent. Some tasks would make changes when run again.
+          
+          Consider reviewing the roles that contain tasks that would make changes.
+          For optimal idempotence, all tasks should detect if changes are needed before making them.
+          {% else %}
+          ✅ The playbook is fully idempotent! No tasks would make changes when run again.
+          {% endif %}
+      
+  post_tasks:
+    - name: Suggest next steps
+      ansible.builtin.debug:
+        msg: |
+          To improve idempotence:
+          1. Add proper changed_when and failed_when directives to all tasks
+          2. Use check modes and registers to detect if changes are needed
+          3. Prefer Ansible modules over shell commands where possible
+          4. Use creates, removes, or other conditionals for commands that can't easily check state

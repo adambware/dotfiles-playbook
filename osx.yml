@@ -1,79 +1,47 @@
 ---
-  - name: "Install Homebrew"
-    hosts: 127.0.0.1
-    connection: local
-    gather_facts: false
-    vars_files:
-      - vars/main.yml
-    roles:
-      - adambware.homebrew-install
+# MacOS Setup Playbook
+# Updated for modern Ansible and macOS
 
-  - name: "Install and configure zsh and oh-my-zsh"
-    hosts: 127.0.0.1
-    connection: local
-    gather_facts: false
-    vars_files:
-      - vars/main.yml
-    roles:
-      - adambware.zsh
+- name: "Setup macOS environment"
+  hosts: localhost
+  connection: local
+  gather_facts: true  # Enable facts gathering to detect architecture
+  vars_files:
+    - vars/main.yml
 
-  - name: "Install Homebrew Packages"
-    hosts: 127.0.0.1
-    connection: local
-    gather_facts: false
-    vars_files:
-      - vars/main.yml
-    roles:
-      - adambware.homebrew-packages
-
-  - name: "Install Homebrew Caskroom Casks"
-    hosts: 127.0.0.1
-    connection: local
-    gather_facts: false
-    vars_files:
-      - vars/main.yml
-    roles:
-      - adambware.homebrew-casks
-
-#  - name: "Install and configure python via pyenv"
-#    hosts: 127.0.0.1
-#    connection: local
-#    gather_facts: false
-#    vars_files:
-#      - vars/main.yml
-#    roles:
-#      - adambware.python
-
-  - name: "Install and configure ruby via rbenv"
-    hosts: 127.0.0.1
-    connection: local
-    gather_facts: false
-    vars_files:
-      - vars/main.yml
-    roles:
-      - adambware.ruby
-
-  - name: "Install and configure node via n"
-    hosts: 127.0.0.1
-    connection: local
-    vars_files:
-      - vars/main.yml
-    roles:
-      - adambware.node
-
-  - name: "Install OS X Tweaks"
-    hosts: 127.0.0.1
-    connection: local
-    gather_facts: false
-    vars_files:
-      - vars/main.yml
-    roles:
-      - adambware.osx
-
-  - name: "Install Private Things"
-    hosts: 127.0.0.1
-    connection: local
-    vars_files:
-      - vars/main.yml
-    roles:
-      - adambware.private
+  pre_tasks:
+    - name: "Ensure Ansible collections are installed"
+      ansible.builtin.shell: "ansible-galaxy collection install community.general"
+      changed_when: false
+      
+  roles:
+    - role: adambware.homebrew-install
+      tags: ['homebrew', 'setup']
+      
+    - role: adambware.zsh
+      tags: ['zsh', 'shell']
+      
+    - role: adambware.homebrew-packages
+      tags: ['packages', 'homebrew']
+      
+    - role: adambware.homebrew-casks
+      tags: ['casks', 'homebrew', 'apps']
+      
+    - role: adambware.node
+      tags: ['node', 'development']
+      
+    - role: adambware.python
+      tags: ['python', 'development']
+      
+    - role: adambware.ruby
+      tags: ['ruby', 'development']
+      
+    - role: adambware.osx
+      tags: ['osx', 'settings']
+      
+    - role: adambware.auto-updates
+      tags: ['osx', 'updates']
+      
+    - role: adambware.private
+      tags: ['private']
+      when: setup_private_configs | default(true)

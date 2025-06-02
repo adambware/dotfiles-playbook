@@ -1,2 +1,8 @@
 ---
 # defaults file for adambware.homebrew-install
+
+# Set to false to disable Homebrew analytics
+homebrew_analytics_enabled: false
+
+# Homebrew installation URL
+homebrew_install_url: "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"

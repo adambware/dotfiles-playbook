@@ -1,2 +1,30 @@
 ---
 # defaults file for adambware.osx
+
+# Set to true to enable dark mode
+enable_dark_mode: true
+
+# Screen settings
+screenshot_location: "{{ ansible_env.HOME }}/Desktop"
+screenshot_format: "png"
+screenshot_disable_shadow: true
+
+# Finder settings
+show_hidden_files: true
+show_file_extensions: true
+show_path_in_title_bar: true
+show_status_bar: true
+finder_default_view: "Nlsv"  # List view (other options: icnv, clmv, Flwv)
+
+# Dock settings
+dock_position: "right"  # Options: left, bottom, right
+dock_auto_hide: false
+dock_magnification: false
+
+# Security settings
+require_password_after_sleep: true
+password_delay_seconds: 0
+
+# Safari settings
+safari_show_full_url: true
+safari_enable_developer_menu: true

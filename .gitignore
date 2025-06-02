@@ -1,10 +1,12 @@
+# .gitignore for macOS setup playbook
+
+# macOS system files
 .DS_Store
 .AppleDouble
 .LSOverride
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*
@@ -16,3 +18,39 @@ Icon
 .TemporaryItems
 .Trashes
 .VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Private configuration files
+roles/adambware.private/files/
+roles/adambware.private/templates/
+roles/adambware.private/vars/*.yml
+!roles/adambware.private/vars/main.yml.example
+
+# Ansible retry files
+*.retry
+
+# Ansible Galaxy installation files
+*.tar.gz
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+*.so
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log

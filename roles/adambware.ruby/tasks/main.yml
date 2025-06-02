@@ -1,44 +1,86 @@
 ---
 # tasks file for adambware.ruby
-  - name: Ensure Homebrew is installed
-    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      creates=/usr/local/bin/brew
 
-  - name: Update Homebrew
-    homebrew:
-      update_homebrew=yes
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
 
-  - name: Check rbenv_root
-    shell: echo $RBENV_ROOT
-    register: env_rbenv_root
+- name: Install rbenv and ruby-build
+  community.general.homebrew:
+    name: 
+      - rbenv
+      - ruby-build
+    state: present
 
-  - name: Ensure rbenv_root is set
-    shell: export RBENV_ROOT="{{ rbenv_root }}"
-    when:
-      env_rbenv_root.stdout != "{{ rbenv_root }}"
+- name: Determine rbenv root path based on architecture
+  ansible.builtin.set_fact:
+    rbenv_root: "{{ '/opt/homebrew/var/rbenv' if is_apple_silicon else '/usr/local/var/rbenv' }}"
 
-  - name: Ensure rbenv is installed
-    homebrew:
-      name=rbenv
-      state=latest
+- name: Set up rbenv in shell config
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    marker: "# {mark} RBENV CONFIGURATION"
+    block: |
+      export RBENV_ROOT="{{ rbenv_root }}"
+      eval "$(rbenv init -)"
+    create: yes
 
-  - name: Init rbenv for zsh or bash
-    shell: if [[ $SHELL == "*/zsh" ]] ; then eval "$(rbenv init - zsh)" ; else eval "$(rbenv init -)" ; fi
+- name: Check if Ruby version is installed
+  ansible.builtin.shell: >
+    export RBENV_ROOT="{{ rbenv_root }}" && 
+    eval "$(rbenv init -)" && 
+    rbenv versions | grep {{ ruby_version }}
+  args:
+    executable: /bin/zsh
+  register: ruby_installed
+  changed_when: false
+  failed_when: false
 
-  - name: Ensure ruby-build is installed
-    homebrew:
-      name=ruby-build
-      state=latest
+- name: Install Ruby
+  ansible.builtin.shell: >
+    export RBENV_ROOT="{{ rbenv_root }}" && 
+    eval "$(rbenv init -)" && 
+    rbenv install -s {{ ruby_version }}
+  args:
+    executable: /bin/zsh
+  when: ruby_installed.rc != 0
 
-  - name: Install ruby
-    shell: rbenv install -s "{{ ruby_version }}"
-      creates={{ rbenv_root }}/versions/{{ ruby_version }}
+- name: Set global Ruby version
+  ansible.builtin.shell: >
+    export RBENV_ROOT="{{ rbenv_root }}" && 
+    eval "$(rbenv init -)" && 
+    rbenv global {{ ruby_version }}
+  args:
+    executable: /bin/zsh
 
-  - name: Set installed ruby as global default
-    shell: rbenv global "{{ ruby_version }}"; rbenv rehash
+- name: Update to latest rubygems version
+  ansible.builtin.shell: >
+    export RBENV_ROOT="{{ rbenv_root }}" && 
+    eval "$(rbenv init -)" && 
+    gem update --system
+  args:
+    executable: /bin/zsh
+  register: gem_update
+  changed_when: "'Latest version already installed' not in gem_update.stdout"
 
-  - name: Update to latest rubygems version
-    become: yes
-    become_method: sudo
-    remote_user: "{{ main_username }}"
-    shell: gem update --system
+- name: Check if Ruby gems are installed
+  ansible.builtin.shell: >
+    export RBENV_ROOT="{{ rbenv_root }}" && 
+    eval "$(rbenv init -)" && 
+    gem list | grep -i "{{ item }}"
+  args:
+    executable: /bin/zsh
+  register: ruby_gems_check
+  changed_when: false
+  failed_when: false
+  with_items: "{{ ruby_gems }}"
+
+- name: Install common Ruby gems
+  ansible.builtin.shell: >
+    export RBENV_ROOT="{{ rbenv_root }}" && 
+    eval "$(rbenv init -)" && 
+    gem install {{ item.item }}
+  args:
+    executable: /bin/zsh
+  with_items: "{{ ruby_gems_check.results }}"
+  when: item.rc != 0

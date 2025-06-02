@@ -1,20 +1,13 @@
 ---
 # tasks file for adambware.homebrew-casks
-  - name: Ensure Homebrew is installed
-    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      creates=/usr/local/bin/brew
 
-  - name: Update Homebrew
-    homebrew:
-      update_homebrew=yes
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
 
-#  - name: Ensure casks are installed
-#    shell: brew cask install --appdir="/Applications" {{ item }}
-#      creates=/opt/homebrew-cask/Caskroom/{{ item }}
-#    with_items: "{{ casks }}"
-
-  - name: Ensure casks are installed
-    homebrew_cask:
-      name: "{{ item }}"
-      install_options: appdir="/Applications"
-    with_items: "{{ casks }}"
+- name: Ensure casks are installed
+  community.general.homebrew_cask:
+    name: "{{ item }}"
+    state: present
+    install_options: "appdir=/Applications"
+  with_items: "{{ casks }}"

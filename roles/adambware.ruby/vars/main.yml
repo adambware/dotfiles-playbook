@@ -1,4 +1,0 @@
----
-# vars file for adambware.ruby
-rbenv_root: "/usr/local/var/rbenv" # no trailing slash!
-ruby_version: "2.6.5"

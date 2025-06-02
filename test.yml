@@ -1,0 +1,28 @@
+---
+# Test playbook for verifying macOS configuration
+
+- name: "Verify macOS setup"
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars_files:
+    - vars/main.yml
+
+  pre_tasks:
+    - name: Display system information
+      ansible.builtin.debug:
+        msg: 
+          - "macOS system information:"
+          - "  - Architecture: {{ ansible_architecture }}"
+          - "  - Distribution: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "  - User: {{ main_username }}"
+          - "  - Homebrew path: {{ homebrew_prefix }}"
+
+  roles:
+    - role: adambware.test
+      tags: ['test']
+
+  post_tasks:
+    - name: Show success message
+      ansible.builtin.debug:
+        msg: "All tests completed successfully! 🎉"

@@ -1,38 +1,37 @@
-Role Name
-=========
+# Role: adambware.node
 
-A brief description of the role goes here.
+Installs Node.js and related tools on macOS.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- macOS (Big Sur or later)
+- Homebrew installed (provided by adambware.homebrew-install role)
+- Ansible 2.10+
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+The role primarily uses variables from the main playbook, but you can customize the following in your own variables:
 
-Dependencies
-------------
+```yaml
+# Global npm packages to install
+npm_global_packages:
+  - yarn
+  - typescript
+  - ts-node
+  - npm-check-updates
+```
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Example
 
-Example Playbook
-----------------
+```yaml
+- hosts: localhost
+  roles:
+    - role: adambware.node
+```
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Notes
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+- Installs Node.js via Homebrew for system-wide use
+- Also installs NVM (Node Version Manager) for managing multiple Node.js versions
+- Configures NVM in your shell configuration
+- Installs common global npm packages

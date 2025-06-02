@@ -1,5 +1,23 @@
 ---
-# vars file for dotfiles-playbook
+# Main variables for macOS playbook
 
-# the logged in username running this playbook.
+# User information
 main_username: adamboulware
+user_fullname: "Adam Boulware"
+user_email: "your.email@example.com"  # Update this with your email
+
+# Architecture detection (will be automatically determined)
+is_apple_silicon: "{{ ansible_architecture == 'arm64' }}"
+
+# Feature flags
+setup_private_configs: true  # Set to false to skip private configurations
+enable_dark_mode: true
+enable_filevault: false  # Set to true to enable FileVault encryption
+
+# Homebrew paths
+homebrew_prefix: "{{ '/opt/homebrew' if is_apple_silicon else '/usr/local' }}"
+homebrew_bin: "{{ homebrew_prefix }}/bin"
+homebrew_brew_bin: "{{ homebrew_bin }}/brew"
+
+# Shell settings
+zsh_path: "{{ homebrew_bin }}/zsh"

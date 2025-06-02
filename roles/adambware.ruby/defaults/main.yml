@@ -1,2 +1,17 @@
 ---
 # defaults file for adambware.ruby
+
+# Latest stable Ruby version as of June 2025
+ruby_version: "3.3.0"
+
+# Path to rbenv installation (determined by architecture)
+rbenv_root: "{{ '/opt/homebrew/var/rbenv' if is_apple_silicon else '/usr/local/var/rbenv' }}"
+
+# Common Ruby gems to install
+ruby_gems:
+  - bundler
+  - rake
+  - rails
+  - solargraph
+  - rubocop
+  - pry

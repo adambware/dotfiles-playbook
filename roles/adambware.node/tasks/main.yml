@@ -1,20 +1,57 @@
 ---
 # tasks file for adambware.node
-  - name: Ensure Homebrew is installed
-    shell: ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      creates=/usr/local/bin/brew
 
-  - name: Update Homebrew
-    homebrew:
-      update_homebrew=yes
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
 
-  - name: Install node.js without npm
-    homebrew:
-      name: node
-      state: latest
+- name: Install node.js via Homebrew
+  community.general.homebrew:
+    name: node
+    state: present
 
-  - name: Install n (simple node version management)
-    environment:
-      PATH: "~/.node/bin:{{ ansible_env.PATH }}"
-    shell: npm install -g n
-      creates=~/.node/bin/n
+- name: Check if NVM is installed
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+  register: nvm_check
+
+- name: Install nvm (Node Version Manager)
+  ansible.builtin.shell: >
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvm_version }}/install.sh | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+  when: not nvm_check.stat.exists
+  
+- name: Set up NVM in shell config
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    marker: "# {mark} NVM CONFIGURATION"
+    block: |
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+    create: yes
+
+- name: Install Node LTS version
+  ansible.builtin.shell: >
+    source {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install {{ node_lts_version }}
+  args:
+    executable: /bin/bash
+  register: nvm_install
+  changed_when: "'is already installed' not in nvm_install.stdout"
+    
+- name: Check if global npm packages are installed
+  ansible.builtin.shell: npm list -g --depth=0 | grep "{{ item }}"
+  args:
+    executable: /bin/bash
+  register: npm_packages_check
+  changed_when: false
+  failed_when: false
+  with_items: "{{ npm_global_packages }}"
+    
+- name: Install global npm packages
+  community.general.npm:
+    name: "{{ item.item }}"
+    global: yes
+  with_items: "{{ npm_packages_check.results }}"
+  when: item.rc != 0

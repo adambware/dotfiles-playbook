@@ -1,45 +1,191 @@
-# adambware does dotfiles with ansible
-## dotfiles-playbook
-My dotfiles are how I personalize my system. Ansible lets me do some easy testing to make sure things get installed properly along the way.
+# Modern macOS Setup with Ansible
 
-This is very much a work in progress and is currently only focused on a local macOS installation.
+This Ansible playbook automates the setup of a macOS development environment. It handles installing applications, configuring system preferences, and setting up development tools - all customized to your preferences.
 
-## install
+## Features
 
-[Ansible must be installed as a prerequisite.](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+- 🍎 Full support for both Intel and Apple Silicon Macs
+- 🎨 Sets up a complete development environment with best practices
+- 🛠️ Installs common developer tools and applications via Homebrew
+- 🧰 Configures shell environments with ZSH and Oh My Zsh
+- 📦 Sets up language runtimes (Ruby, Node.js, Python)
+- ⚙️ Configures macOS system preferences for developer productivity
+- 🔒 Includes security enhancements
+- 🧩 Modular design makes it easy to customize
+- 🧪 Built-in testing and validation
+- 🔐 Support for private configurations and secrets
 
-Run this:
+## Requirements
 
-```sh
-git clone https://github.com/adambware/dotfiles-playbook.git ~/.dotfiles;
-cd ~/.dotfiles;
-ansible-playbook -K osx.yml
+- macOS (Big Sur or later)
+- Administrator access
+
+## Quick Start
+
+The easiest way to get started is to use the included setup script:
+
+```bash
+# Clone this repository
+git clone https://github.com/adambware/dotfiles-playbook.git ~/.dotfiles
+
+# Navigate to the playbook directory
+cd ~/.dotfiles
+
+# Make the setup script executable
+chmod +x setup.sh
+
+# Run the setup script (this will install Ansible if needed)
+./setup.sh
 ```
 
-This will install and set up zsh, homebrew, ruby, node, python, CLI tools, numerous apps, and even tweaks quite a few OS X settings.
+The setup script will automatically install any prerequisites (including Ansible and Homebrew if needed) and run the playbook.
 
-Certain files will be symlinked from .dotfiles into your home directory. Others I found simpler to copy to their respective locations... For now!
+## Using the Setup Script
 
-## topical
+The `setup.sh` script provides several options to customize your installation:
 
-Similar to [holman does dotfiles](https://github.com/holman/dotfiles) everything is built around a topic area. Add a namespaced directory within `roles` for any new area in your forked dotfiles to organize files within each topic. Each role is executed from the `osx.yml` playbook file.
+```bash
+# Run only specific roles using tags
+./setup.sh --tags=homebrew,zsh
 
-## what is happening
+# Run in check mode (dry run without making changes)
+./setup.sh --check
 
-Everything you want in your environment! I have a lot of stuff revolving around web development and making OS X even friendlier for power users. Check everything out in the file browser and see what might work for you. `osx.yml` organizes and runs each role, and each directory in `roles` contains 'tasks' that drive most of the functionality. Check out `osx.yml` and then dig into the tasks within each role - that's a good place to start!
-[Fork it](https://github.com/adambware/dotfiles-playbook/fork), remove what you don't need, and build what you do need.
+# Run validation checks on the playbook
+./setup.sh --validate
 
-## components
+# Run tests to verify your installation
+./setup.sh --test
 
-Despite all of the great inspirations I've found for my dotfiles, I'm still tidying up the organization. The topical organization makes most everything self explanatory if you start at `osx.yml` and follow the trail. I'll write more here when it's in a better place!
+# Show help information
+./setup.sh --help
+```
 
-## bugs
+## Customization
 
-My goal is for this to work for everyone; meaning you can clone it, install, and it will work for an OS X machine (currently). That said, I've only used this on *my* MacBook, so there's a good chance something might break on yours.
+The playbook is organized into roles for different aspects of configuration:
 
-If you're new to this and run into any roadblocks, please [open an issue](https://github.com/adambware/dotfiles-playbook/issues) on this repository and I'd love to work through it!
+- `adambware.homebrew-install` - Installs Homebrew
+- `adambware.zsh` - Sets up ZSH and Oh My Zsh
+- `adambware.homebrew-packages` - Installs CLI tools via Homebrew
+- `adambware.homebrew-casks` - Installs GUI applications via Homebrew Casks
+- `adambware.ruby` - Sets up Ruby environment with rbenv
+- `adambware.python` - Sets up Python environment with pyenv
+- `adambware.node` - Sets up Node.js environment with nvm
+- `adambware.osx` - Configures macOS system preferences
+- `adambware.auto-updates` - Configures automatic system updates
+- `adambware.private` - Your private configurations (optional)
+- `adambware.test` - Validates that everything is installed correctly
 
-## thanks
-I took quite a few ideas from [Zach Holman](https://github.com/holman)'s clever [dotfiles](https://github.com/holman/dotfiles). 
-Also found some great work over at [thoughtbot](https://github.com/thoughtbot/) from their [laptop](https://github.com/thoughtbot/laptop) setup script. 
-Most OS X tweaks came from the amazing [.osx](https://github.com/mathiasbynens/dotfiles/blob/master/.osx) created by [Mathias Bynens](https://github.com/mathiasbynens).
+To customize:
+
+1. Edit `vars/main.yml` to update main variables
+2. Modify roles with custom variables in their respective configuration files
+3. Run specific roles with tags: `./setup.sh --tags=homebrew,zsh`
+
+## Testing and Validation
+
+This playbook includes comprehensive testing and validation:
+
+### Validation
+
+Run `./setup.sh --validate` to check the playbook for:
+
+- Syntax errors
+- Best practices using ansible-lint
+- Variable definitions
+- Role dependencies
+
+### Testing
+
+Run `./setup.sh --test` to verify your installation:
+
+- Checks that all components are installed correctly
+- Verifies that paths and configurations are correct
+- Confirms that Homebrew packages and casks are present
+- Validates shell environment setup
+- Verifies language runtimes (Node.js, Ruby, Python)
+- Checks system configurations and preferences
+
+## Private Configurations
+
+The playbook includes a special role for your private configurations:
+
+1. Copy the example file: `cp roles/adambware.private/vars/main.yml.example roles/adambware.private/vars/main.yml`
+2. Edit the file to include your private configurations
+3. Add any private files to the `roles/adambware.private/files` directory
+
+The private role supports:
+
+- Private Homebrew packages and casks
+- SSH keys and configurations
+- Git settings
+- Environment variables
+- Shell aliases
+- VS Code extensions
+- VPN configurations
+- AWS, Azure, and other cloud configurations
+
+## Advanced Usage
+
+If you prefer to use Ansible directly instead of the setup script:
+
+```bash
+# Run the main playbook
+ansible-playbook -K osx.yml
+
+# Run with specific tags
+ansible-playbook -K osx.yml --tags "homebrew,zsh"
+
+# Run the test playbook
+ansible-playbook -K test.yml
+
+# Run the validation playbook
+ansible-playbook -K validate.yml
+```
+
+## Structure
+
+```text
+├── osx.yml               # Main playbook
+├── test.yml              # Test playbook for verifying installation
+├── validate.yml          # Validation playbook for code quality
+├── setup.sh              # Helper script for easy execution
+├── vars/
+│   └── main.yml          # Global variables
+└── roles/                # Individual configuration roles
+    ├── adambware.homebrew-install/
+    ├── adambware.zsh/
+    ├── adambware.homebrew-packages/
+    └── ...
+```
+
+## Extending the Playbook
+
+You can easily extend this playbook to suit your needs:
+
+1. Add new roles in the `roles/` directory
+2. Add new variables to customize behavior
+3. Add new tasks to existing roles
+4. Update the main playbook to include your roles
+
+## Troubleshooting
+
+If you encounter issues:
+
+1. Run with `--check` to see what changes would be made
+2. Run with `-vvv` for verbose output: `./setup.sh -vvv`
+3. Check the logs for errors
+4. Run the test playbook to verify your setup: `./setup.sh --test`
+
+## Acknowledgments
+
+This playbook builds upon the work of:
+
+- [Zach Holman's dotfiles](https://github.com/holman/dotfiles)
+- [thoughtbot's laptop](https://github.com/thoughtbot/laptop)
+- [Mathias Bynens' .osx](https://github.com/mathiasbynens/dotfiles/blob/master/.osx)
+
+## License
+
+MIT

@@ -1,38 +1,44 @@
-Role Name
-=========
+# Role: adambware.ruby
 
-A brief description of the role goes here.
+Installs Ruby via rbenv with support for both Intel and Apple Silicon Macs.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- macOS (Big Sur or later)
+- Homebrew installed (provided by adambware.homebrew-install role)
+- Ansible 2.10+
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Available variables are listed below, along with default values:
 
-Dependencies
-------------
+```yaml
+# Ruby version to install
+ruby_version: "3.3.0"
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+# Common Ruby gems to install
+ruby_gems:
+  - bundler
+  - rake
+  - rails
+  - solargraph
+  - rubocop
+  - pry
+```
 
-Example Playbook
-----------------
+## Example
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+```yaml
+- hosts: localhost
+  roles:
+    - role: adambware.ruby
+```
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+## Notes
 
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+- Installs rbenv and ruby-build via Homebrew
+- Sets up rbenv in your shell configuration
+- Installs the specified Ruby version
+- Sets the installed version as the global default
+- Updates RubyGems to the latest version
+- Installs common Ruby gems

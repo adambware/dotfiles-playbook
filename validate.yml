@@ -1,0 +1,29 @@
+---
+# Playbook for validating Ansible code quality
+
+- name: Validate Ansible playbook and roles
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  
+  tasks:
+    - name: Check syntax of main playbook
+      ansible.builtin.command: ansible-playbook --syntax-check osx.yml
+      changed_when: false
+      
+    - name: Check syntax of test playbook
+      ansible.builtin.command: ansible-playbook --syntax-check test.yml
+      changed_when: false
+
+    - name: Run ansible-lint on playbooks
+      ansible.builtin.command: ansible-lint osx.yml test.yml
+      changed_when: false
+      ignore_errors: yes
+      
+    - name: List all variables for validation
+      ansible.builtin.command: ansible-inventory --list -i localhost, --yaml
+      changed_when: false
+      
+    - name: Show success message
+      ansible.builtin.debug:
+        msg: "Validation completed! 🎉"

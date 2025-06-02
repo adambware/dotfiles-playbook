@@ -1,0 +1,20 @@
+---
+# VPN setup tasks for private role
+
+- name: Copy VPN configuration files
+  ansible.builtin.copy:
+    src: "{{ item.config_file }}"
+    dest: "{{ ansible_env.HOME }}/.config/vpn/{{ item.name | replace(' ', '_') }}.ovpn"
+    mode: "0600"
+  with_items: "{{ private_vpn_configs }}"
+  when: item.type == "openvpn"
+
+- name: Copy VPN credentials files
+  ansible.builtin.copy:
+    src: "{{ item.credentials_file }}"
+    dest: "{{ ansible_env.HOME }}/.config/vpn/{{ item.name | replace(' ', '_') }}_credentials.txt"
+    mode: "0600"
+  with_items: "{{ private_vpn_configs }}"
+  when: 
+    - item.type == "openvpn"
+    - item.credentials_file is defined
