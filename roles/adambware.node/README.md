@@ -13,7 +13,10 @@ Installs Node.js and related tools on macOS.
 The role primarily uses variables from the main playbook, but you can customize the following in your own variables:
 
 ```yaml
-# Global npm packages to install
+# Node.js version
+node_lts_version: "lts"
+
+# Global NPM packages to install
 npm_global_packages:
   - yarn
   - typescript
@@ -31,10 +34,19 @@ npm_global_packages:
 
 ## Notes
 
-- Installs Node.js via Homebrew for system-wide use
-- Also installs NVM (Node Version Manager) for managing multiple Node.js versions
-- Configures NVM in your shell configuration
+- Uses tj/n (Node Version Manager) for managing Node.js versions
+- Does not install Node.js via Homebrew as it's redundant when using n
+- Configures n in your shell configuration
 - Installs common global npm packages
+
+## Why tj/n Instead of NVM?
+
+This role uses tj/n instead of NVM for several reasons:
+
+1. **Simplicity**: n is simpler and more lightweight than NVM
+2. **Performance**: n has less overhead and faster shell initialization
+3. **Ease of use**: n has a more straightforward command syntax
+4. **Maintenance**: n requires less configuration and management
 
 ## Idempotence
 
@@ -44,6 +56,7 @@ This role has been enhanced for better idempotence:
 - Properly registers shell command outputs to avoid unnecessary changes
 - Uses appropriate `changed_when` directives for shell commands
 - Only installs packages that aren't already installed
+- Respects check mode for all operations
 
 You can test the idempotence of this role using:
 

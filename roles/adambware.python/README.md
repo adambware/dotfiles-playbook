@@ -38,8 +38,8 @@ python_packages:
 
 ## Notes
 
-- Installs Python via Homebrew for system-wide use
-- Also installs pyenv for managing multiple Python versions
+- Uses pyenv exclusively for managing Python versions
+- Does not install Python via Homebrew as it's redundant when using pyenv
 - Sets up pyenv in your shell configuration
 - Installs the specified Python version via pyenv
 - Sets the installed version as the global default
@@ -54,6 +54,7 @@ This role has been enhanced for better idempotence:
 - Properly registers shell command outputs to avoid unnecessary changes
 - Uses appropriate `changed_when` directives for shell commands
 - Only installs packages that aren't already installed
+- Respects check mode for all operations
 
 You can test the idempotence of this role using:
 

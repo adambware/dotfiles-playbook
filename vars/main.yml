@@ -20,4 +20,4 @@ homebrew_bin: "{{ homebrew_prefix }}/bin"
 homebrew_brew_bin: "{{ homebrew_bin }}/brew"
 
 # Shell settings
-zsh_path: "{{ homebrew_bin }}/zsh"
+zsh_path: "/bin/zsh"

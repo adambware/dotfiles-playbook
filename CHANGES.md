@@ -97,11 +97,37 @@
    - Better handling of command failures
    - Clear feedback on test failures
 
+## Additional Improvements
+
+### 6. Simplified Language Version Management
+
+- **ZSH Configuration:**
+  - Removed redundant Homebrew ZSH installation since macOS includes ZSH by default
+  - Using system ZSH instead of Homebrew version for better compatibility and simplicity
+  - Updated path references to use system ZSH
+
+- **Node.js Setup:**
+  - Replaced NVM with tj/n for Node.js version management
+  - Removed redundant Homebrew Node.js installation
+  - Simplified shell configuration for Node.js version management
+  - Updated installation and environment variable configuration
+
+- **Ruby Setup:**
+  - Simplified rbenv path management to use ~/.rbenv
+  - Removed architecture-specific path handling for cleaner configuration
+  - Improved idempotence of Ruby installation steps
+
+- **Python Setup:**
+  - Removed redundant Homebrew Python installation
+  - Using pyenv exclusively for Python version management
+  - Simplified shell configuration
+
 ## Next Steps
 
-The Ansible playbook is now fully modernized with proper idempotence, testing, and documentation. Future improvements could include:
+The Ansible playbook is now fully modernized with proper idempotence, testing, and simplified language management. Future improvements could include:
 
 1. Adding more specialized roles for additional development tools
 2. Expanding the test coverage for edge cases
 3. Adding CI/CD integration for automated testing
 4. Creating a web-based documentation site
+5. Further simplifying Docker and container management

@@ -6,11 +6,6 @@
     update_homebrew: true
   when: not ansible_check_mode
 
-- name: Install Python via Homebrew
-  community.general.homebrew:
-    name: python
-    state: present
-
 - name: Ensure pyenv is installed
   community.general.homebrew:
     name: pyenv

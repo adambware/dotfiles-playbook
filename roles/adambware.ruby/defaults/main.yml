@@ -4,8 +4,8 @@
 # Latest stable Ruby version as of June 2025
 ruby_version: "3.3.0"
 
-# Path to rbenv installation (determined by architecture)
-rbenv_root: "{{ '/opt/homebrew/var/rbenv' if is_apple_silicon else '/usr/local/var/rbenv' }}"
+# Path to rbenv installation
+rbenv_root: "{{ ansible_env.HOME }}/.rbenv"
 
 # Common Ruby gems to install
 ruby_gems:

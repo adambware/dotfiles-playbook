@@ -1,9 +1,8 @@
 ---
 # defaults file for adambware.node
 
-# Node.js version manager settings
-nvm_version: "0.39.5"
-node_lts_version: "lts/*"
+# Node.js version
+node_lts_version: "lts"
 
 # Global NPM packages to install
 npm_global_packages:

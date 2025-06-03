@@ -6,41 +6,26 @@
     update_homebrew: true
   when: not ansible_check_mode
 
-- name: Install node.js via Homebrew
-  community.general.homebrew:
-    name: node
-    state: present
-
-- name: Check if NVM is installed
+- name: Check if n is installed
   ansible.builtin.stat:
-    path: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-  register: nvm_check
+    path: "{{ ansible_env.HOME }}/.n"
+  register: n_check
 
-- name: Install nvm (Node Version Manager)
+- name: Install n (Node Version Manager)
   ansible.builtin.shell: >
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvm_version }}/install.sh | bash
+    curl -L https://git.io/n-install | bash -s -- -y {{ node_lts_version }}
   args:
-    creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-  when: not nvm_check.stat.exists and not ansible_check_mode
+    creates: "{{ ansible_env.HOME }}/.n"
+  when: not n_check.stat.exists and not ansible_check_mode
   
-- name: Set up NVM in shell config
+- name: Set up n in shell config
   ansible.builtin.blockinfile:
     path: "{{ ansible_env.HOME }}/.zshrc"
-    marker: "# {mark} NVM CONFIGURATION"
+    marker: "# {mark} NODE VERSION MANAGER CONFIGURATION"
     block: |
-      export NVM_DIR="$HOME/.nvm"
-      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+      export N_PREFIX="$HOME/.n"
+      export PATH="$N_PREFIX/bin:$PATH"
     create: yes
-
-- name: Install Node LTS version
-  ansible.builtin.shell: >
-    source {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install {{ node_lts_version }}
-  args:
-    executable: /bin/bash
-  register: nvm_install
-  changed_when: "'is already installed' not in nvm_install.stdout"
-  when: not ansible_check_mode
     
 - name: Check if global npm packages are installed
   ansible.builtin.shell: npm list -g --depth=0 | grep "{{ item }}"

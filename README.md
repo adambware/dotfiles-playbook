@@ -7,8 +7,8 @@ This Ansible playbook automates the setup of a macOS development environment. It
 - 🍎 Full support for both Intel and Apple Silicon Macs
 - 🎨 Sets up a complete development environment with best practices
 - 🛠️ Installs common developer tools and applications via Homebrew
-- 🧰 Configures shell environments with ZSH and Oh My Zsh
-- 📦 Sets up language runtimes (Ruby, Node.js, Python)
+- 🧰 Configures shell environments with macOS's built-in ZSH and Oh My Zsh
+- 📦 Sets up language runtimes using version managers (tj/n, pyenv, rbenv)
 - ⚙️ Configures macOS system preferences for developer productivity
 - 🔒 Includes security enhancements
 - 🧩 Modular design makes it easy to customize
@@ -70,12 +70,12 @@ The `setup.sh` script provides several options to customize your installation:
 The playbook is organized into roles for different aspects of configuration:
 
 - `adambware.homebrew-install` - Installs Homebrew
-- `adambware.zsh` - Sets up ZSH and Oh My Zsh
+- `adambware.zsh` - Sets up Oh My Zsh with the built-in macOS ZSH
 - `adambware.homebrew-packages` - Installs CLI tools via Homebrew
 - `adambware.homebrew-casks` - Installs GUI applications via Homebrew Casks
 - `adambware.ruby` - Sets up Ruby environment with rbenv
 - `adambware.python` - Sets up Python environment with pyenv
-- `adambware.node` - Sets up Node.js environment with nvm
+- `adambware.node` - Sets up Node.js environment with tj/n
 - `adambware.osx` - Configures macOS system preferences
 - `adambware.auto-updates` - Configures automatic system updates
 - `adambware.private` - Your private configurations (optional)

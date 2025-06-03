@@ -13,9 +13,9 @@
       - ruby-build
     state: present
 
-- name: Determine rbenv root path based on architecture
+- name: Determine rbenv root path
   ansible.builtin.set_fact:
-    rbenv_root: "{{ '/opt/homebrew/var/rbenv' if is_apple_silicon else '/usr/local/var/rbenv' }}"
+    rbenv_root: "{{ ansible_env.HOME }}/.rbenv"
 
 - name: Set up rbenv in shell config
   ansible.builtin.blockinfile:
