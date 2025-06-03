@@ -18,3 +18,4 @@
     state: present
     install_options: "appdir=/Applications"
   with_items: "{{ casks }}"
+  when: homebrew_status.stdout != "" and not ansible_check_mode

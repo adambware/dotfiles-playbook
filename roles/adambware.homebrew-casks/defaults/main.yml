@@ -6,7 +6,6 @@ casks:
   # Utilities
   - alfred
   - bartender
-  - rectangle
   
   # Browsers
   - firefox

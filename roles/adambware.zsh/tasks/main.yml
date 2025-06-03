@@ -1,11 +1,6 @@
 ---
 # tasks file for adambware.zsh
 
-- name: Ensure zsh is installed via homebrew
-  community.general.homebrew:
-    name: zsh
-    state: present
-
 - name: Checking default shell
   ansible.builtin.shell: dscl . -read /Users/{{ main_username }} UserShell | awk '{print $2}'
   register: default_shell
