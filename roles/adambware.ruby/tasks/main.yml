@@ -44,7 +44,7 @@
     rbenv install -s {{ ruby_version }}
   args:
     executable: /bin/zsh
-  when: ruby_installed.rc != 0
+  when: ruby_installed.rc != 0 and not ansible_check_mode
 
 - name: Set global Ruby version
   ansible.builtin.shell: >
@@ -53,6 +53,7 @@
     rbenv global {{ ruby_version }}
   args:
     executable: /bin/zsh
+  when: not ansible_check_mode
 
 - name: Update to latest rubygems version
   ansible.builtin.shell: >
@@ -63,6 +64,7 @@
     executable: /bin/zsh
   register: gem_update
   changed_when: "'Latest version already installed' not in gem_update.stdout"
+  when: not ansible_check_mode
 
 - name: Check if Ruby gems are installed
   ansible.builtin.shell: >
@@ -84,4 +86,4 @@
   args:
     executable: /bin/zsh
   with_items: "{{ ruby_gems_check.results }}"
-  when: item.rc != 0
+  when: item.rc != 0 and not ansible_check_mode

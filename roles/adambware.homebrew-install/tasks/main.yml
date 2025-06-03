@@ -8,7 +8,7 @@
 
 - name: Install Homebrew
   ansible.builtin.shell: /bin/bash -c "$(curl -fsSL {{ homebrew_install_url }})"
-  when: not homebrew_check.stat.exists
+  when: not homebrew_check.stat.exists and not ansible_check_mode
 
 - name: Add Homebrew to PATH (Apple Silicon)
   ansible.builtin.lineinfile:

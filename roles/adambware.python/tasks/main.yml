@@ -54,7 +54,7 @@
     pyenv install {{ python_version }}
   args:
     executable: /bin/zsh
-  when: python_installed.rc != 0
+  when: python_installed.rc != 0 and not ansible_check_mode
 
 - name: Set global Python version
   ansible.builtin.shell: >
@@ -64,6 +64,7 @@
     pyenv global {{ python_version }}
   args:
     executable: /bin/zsh
+  when: not ansible_check_mode
 
 - name: Update pip to latest version
   ansible.builtin.shell: >
@@ -75,6 +76,7 @@
     executable: /bin/zsh
   register: pip_update
   changed_when: "'Requirement already satisfied' not in pip_update.stdout"
+  when: not ansible_check_mode
 
 - name: Check if Python packages are installed
   ansible.builtin.shell: >
@@ -98,4 +100,4 @@
   args:
     executable: /bin/zsh
   with_items: "{{ python_packages_check.results }}"
-  when: item.rc != 0
+  when: item.rc != 0 and not ansible_check_mode

@@ -76,7 +76,7 @@
 - name: Install VS Code extensions
   ansible.builtin.command: "code --install-extension {{ item }}"
   with_items: "{{ private_vscode_extensions | default([]) }}"
-  when: private_vscode_extensions is defined
+  when: private_vscode_extensions is defined and not ansible_check_mode
   register: vscode_extension_result
   changed_when: "'already installed' not in vscode_extension_result.stdout"
   failed_when: false

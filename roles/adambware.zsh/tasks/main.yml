@@ -1,6 +1,12 @@
 ---
 # tasks file for adambware.zsh
 
+- name: Ensure zsh is installed via homebrew
+  community.general.homebrew:
+    name: zsh
+    state: present
+  when: not ansible_check_mode
+
 - name: Checking default shell
   ansible.builtin.shell: dscl . -read /Users/{{ main_username }} UserShell | awk '{print $2}'
   register: default_shell
@@ -28,7 +34,7 @@
 
 - name: Ensure oh-my-zsh is installed
   ansible.builtin.shell: sh -c "$(curl -fsSL {{ oh_my_zsh_install_url }})" "" --unattended
-  when: not oh_my_zsh_check.stat.exists
+  when: not oh_my_zsh_check.stat.exists and not ansible_check_mode
 
 - name: Create custom directory for Oh My Zsh
   ansible.builtin.file:

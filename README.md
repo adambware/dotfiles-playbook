@@ -218,6 +218,15 @@ The `--check` option performs a complete dry run without making any changes to y
 - No files will be created or modified
 - No Homebrew updates will be performed
 - No system settings will be changed
+- No shell commands are executed (including Oh My Zsh, pyenv, nvm, etc.)
+- No pip/gem/npm packages will be installed
+- No third-party scripts are downloaded or run
+
+All tasks in the playbook have been carefully reviewed to respect check mode. The playbook uses:
+
+- `when: not ansible_check_mode` to skip shell commands or operations that could modify the system
+- Built-in Ansible modules that natively support check mode
+- Proper conditionals to ensure idempotence
 
 This is useful for previewing what would happen during a real run and is completely safe to use.
 

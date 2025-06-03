@@ -187,6 +187,7 @@
     - enable_filevault | default(false)
     - filevault_status.stdout is defined
     - "'FileVault is On' not in filevault_status.stdout"
+    - not ansible_check_mode
   register: filevault_result
   failed_when: false
 

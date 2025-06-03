@@ -21,7 +21,7 @@
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v{{ nvm_version }}/install.sh | bash
   args:
     creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
-  when: not nvm_check.stat.exists
+  when: not nvm_check.stat.exists and not ansible_check_mode
   
 - name: Set up NVM in shell config
   ansible.builtin.blockinfile:
@@ -40,6 +40,7 @@
     executable: /bin/bash
   register: nvm_install
   changed_when: "'is already installed' not in nvm_install.stdout"
+  when: not ansible_check_mode
     
 - name: Check if global npm packages are installed
   ansible.builtin.shell: npm list -g --depth=0 | grep "{{ item }}"
@@ -55,4 +56,4 @@
     name: "{{ item.item }}"
     global: yes
   with_items: "{{ npm_packages_check.results }}"
-  when: item.rc != 0
+  when: item.rc != 0 and not ansible_check_mode

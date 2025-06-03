@@ -74,7 +74,12 @@
    - Shell commands use proper `changed_when` directives
    - Tasks use conditional execution based on current state
    - Homebrew updates only happen when packages are outdated
-   - Homebrew updates are skipped in check mode (--check)
+   - All tasks properly respect check mode (--check)
+   - Shell commands and external scripts never run in check mode
+   - Installation operations (nvm, pyenv, ruby, oh-my-zsh) are skipped in check mode
+   - VS Code extension installation skipped in check mode
+   - Fixed Homebrew-Casks role to properly handle check mode
+   - Initial Homebrew installation respects check mode
 
 2. **Testing:**
    - Comprehensive test suite for all aspects of the playbook
