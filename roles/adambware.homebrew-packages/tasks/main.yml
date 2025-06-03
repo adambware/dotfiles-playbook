@@ -1,9 +1,16 @@
 ---
 # tasks file for adambware.homebrew-packages
 
+- name: Check Homebrew status
+  ansible.builtin.command: brew outdated
+  register: homebrew_status
+  changed_when: false
+  failed_when: false
+
 - name: Update Homebrew
   community.general.homebrew:
     update_homebrew: true
+  when: homebrew_status.stdout != "" and not ansible_check_mode
 
 - name: Install common homebrew packages
   community.general.homebrew:

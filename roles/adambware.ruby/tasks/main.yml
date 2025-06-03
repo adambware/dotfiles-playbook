@@ -4,6 +4,7 @@
 - name: Update Homebrew
   community.general.homebrew:
     update_homebrew: true
+  when: not ansible_check_mode
 
 - name: Install rbenv and ruby-build
   community.general.homebrew:

@@ -25,4 +25,4 @@
 - name: Update Homebrew
   community.general.homebrew:
     update_homebrew: true
-  when: homebrew_check.stat.exists
+  when: homebrew_check.stat.exists and not ansible_check_mode

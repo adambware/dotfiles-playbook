@@ -33,3 +33,13 @@ casks:
 
 - All applications are installed to the `/Applications` directory
 - The role automatically updates Homebrew before installing casks
+- The role is idempotent and will only update Homebrew when outdated
+- Casks installation uses Ansible's community.general.homebrew_cask module which ensures idempotence
+
+## Testing
+
+This role is tested for idempotence in the `idempotence.yml` playbook. You can run this test with:
+
+```bash
+./setup.sh --idempotence
+```

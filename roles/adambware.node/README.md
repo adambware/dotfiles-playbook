@@ -35,3 +35,18 @@ npm_global_packages:
 - Also installs NVM (Node Version Manager) for managing multiple Node.js versions
 - Configures NVM in your shell configuration
 - Installs common global npm packages
+
+## Idempotence
+
+This role has been enhanced for better idempotence:
+
+- Checks if npm packages are already installed before installation
+- Properly registers shell command outputs to avoid unnecessary changes
+- Uses appropriate `changed_when` directives for shell commands
+- Only installs packages that aren't already installed
+
+You can test the idempotence of this role using:
+
+```bash
+./setup.sh --idempotence
+```

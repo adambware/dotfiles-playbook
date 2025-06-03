@@ -17,6 +17,7 @@
           - "This will execute the playbook with --check mode to test idempotence"
           - "Architecture: {{ ansible_architecture }}"
           - "Distribution: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "NOTE: No changes will be made to your system during this test"
 
   tasks:
     - name: Run the playbook in check mode

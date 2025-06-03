@@ -45,3 +45,18 @@ python_packages:
 - Sets the installed version as the global default
 - Updates pip to the latest version
 - Installs common Python packages
+
+## Idempotence
+
+This role has been enhanced for better idempotence:
+
+- Checks if Python packages are already installed before installation
+- Properly registers shell command outputs to avoid unnecessary changes
+- Uses appropriate `changed_when` directives for shell commands
+- Only installs packages that aren't already installed
+
+You can test the idempotence of this role using:
+
+```bash
+./setup.sh --idempotence
+```

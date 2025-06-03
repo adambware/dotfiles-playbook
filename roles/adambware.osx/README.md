@@ -34,3 +34,18 @@ The role primarily uses variables from the main playbook.
 - Security settings (screen lock timing, etc.)
 - System performance tweaks
 - Application-specific settings (Safari, Terminal, etc.)
+
+## Idempotence
+
+This role has been optimized for idempotence:
+
+- All tasks check the current state before making changes
+- File operations use proper Ansible modules instead of shell commands
+- Visibility settings for folders use the `community.general.osx_defaults` module
+- All shell commands include proper `changed_when` directives
+
+You can test the idempotence of this role using:
+
+```bash
+./setup.sh --idempotence
+```

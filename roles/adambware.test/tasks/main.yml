@@ -20,6 +20,31 @@
   changed_when: false
   failed_when: zsh_path not in shell_check.stdout
 
+# Architecture-specific testing
+- name: Verify architecture-specific configurations (Apple Silicon)
+  block:
+    - name: Check Rosetta 2 installation
+      ansible.builtin.shell: pkgutil --pkg-info=com.apple.pkg.RosettaUpdateAuto
+      register: rosetta_check
+      changed_when: false
+      failed_when: false
+      
+    - name: Verify arm64 binaries
+      ansible.builtin.shell: arch -arm64 /bin/zsh -c "echo $SHELL"
+      register: arm64_check
+      changed_when: false
+      failed_when: arm64_check.rc != 0
+  when: ansible_architecture == "arm64"
+
+- name: Verify architecture-specific configurations (Intel)
+  block:
+    - name: Verify Intel binaries
+      ansible.builtin.shell: arch -x86_64 /bin/zsh -c "echo $SHELL"
+      register: intel_check
+      changed_when: false
+      failed_when: intel_check.rc != 0
+  when: ansible_architecture == "x86_64"
+
 # Development environment checks
 - name: Verify Node.js installation
   ansible.builtin.command: which node
@@ -84,6 +109,15 @@
     - wget
     - curl
 
+- name: Verify installed homebrew packages
+  ansible.builtin.command: brew list --formula
+  register: installed_packages
+  changed_when: false
+
+- name: Display installed Homebrew packages
+  ansible.builtin.debug:
+    msg: "Installed Homebrew packages: {{ installed_packages.stdout_lines | join(', ') }}"
+
 - name: Verify Homebrew casks
   ansible.builtin.shell: brew list --cask | grep "{{ item }}"
   register: cask_check
@@ -92,6 +126,15 @@
   with_items:
     - iterm2
     - visual-studio-code
+
+- name: Verify installed Homebrew casks
+  ansible.builtin.command: brew list --cask
+  register: installed_casks
+  changed_when: false
+
+- name: Display installed Homebrew casks
+  ansible.builtin.debug:
+    msg: "Installed Homebrew casks: {{ installed_casks.stdout_lines | join(', ') }}"
 
 # Shell configuration verification
 - name: Verify Oh My Zsh installation
@@ -125,6 +168,36 @@
   changed_when: false
   failed_when: brew_path_check.rc != 0
 
+# Application verification
+- name: Verify Applications installation
+  ansible.builtin.stat:
+    path: "/Applications/{{ item }}.app"
+  register: app_check
+  failed_when: not app_check.stat.exists
+  with_items:
+    - "Visual Studio Code"
+    - "iTerm"
+
+# Configuration files verification
+- name: Verify critical configuration files
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/{{ item }}"
+  register: config_check
+  failed_when: not config_check.stat.exists
+  with_items:
+    - ".zshrc"
+    - ".gitconfig"
+
+# Idempotence testing information
+- name: Display idempotence testing information
+  ansible.builtin.debug:
+    msg: |
+      To test idempotence of the playbook, run:
+      ./setup.sh --idempotence
+      
+      This will help you identify any tasks that might change something
+      when run multiple times.
+
 # Success verification
 - name: Verify macOS settings
   ansible.builtin.debug:
@@ -139,4 +212,6 @@
         - Node.js: {{ node_version.stdout | default('Not installed') }}
         - Ruby: {{ ruby_version.stdout | default('Not installed') }}
         - Python: {{ python_version.stdout | default('Not installed') }}
+      
+      Use './setup.sh --idempotence' to verify that the playbook is fully idempotent.
   when: brew_check.rc == 0 and zsh_check.rc == 0

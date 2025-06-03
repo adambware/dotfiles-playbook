@@ -1,0 +1,6 @@
+---
+# vars file for adambware.homebrew-casks
+# Internal variables that shouldn't be changed by users
+
+# Path for applications installed via Homebrew Casks
+applications_path: "/Applications"

@@ -37,3 +37,19 @@ zsh_path: "{{ homebrew_bin }}/zsh"
   - Completions
   - Custom ZSH theme
   - Oh My Zsh configuration
+
+## Idempotence
+
+This role is designed to be fully idempotent:
+
+- Checks if ZSH is already the default shell before attempting to change it
+- Verifies if Oh My Zsh is already installed before installation
+- Uses Ansible's file management modules with proper ownership and permissions
+- Uses the `changed_when` directive to properly track changes
+- All configuration file deployments use the `copy` module which is naturally idempotent
+
+You can test the idempotence of this role using:
+
+```bash
+./setup.sh --idempotence
+```

@@ -42,3 +42,18 @@ ruby_gems:
 - Sets the installed version as the global default
 - Updates RubyGems to the latest version
 - Installs common Ruby gems
+
+## Idempotence
+
+This role has been enhanced for better idempotence:
+
+- Checks if Ruby gems are already installed before installation
+- Properly registers shell command outputs to avoid unnecessary changes
+- Uses appropriate `changed_when` directives for shell commands
+- Only installs gems that aren't already installed
+
+You can test the idempotence of this role using:
+
+```bash
+./setup.sh --idempotence
+```

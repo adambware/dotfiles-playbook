@@ -13,6 +13,7 @@ This Ansible playbook automates the setup of a macOS development environment. It
 - 🔒 Includes security enhancements
 - 🧩 Modular design makes it easy to customize
 - 🧪 Built-in testing and validation
+- 🔁 Fully idempotent implementation
 - 🔐 Support for private configurations and secrets
 
 ## Requirements
@@ -56,6 +57,9 @@ The `setup.sh` script provides several options to customize your installation:
 
 # Run tests to verify your installation
 ./setup.sh --test
+
+# Run idempotence test to verify no changes on second run
+./setup.sh --idempotence
 
 # Show help information
 ./setup.sh --help
@@ -106,6 +110,23 @@ Run `./setup.sh --test` to verify your installation:
 - Validates shell environment setup
 - Verifies language runtimes (Node.js, Ruby, Python)
 - Checks system configurations and preferences
+- Verifies architecture-specific configurations (Intel vs Apple Silicon)
+
+### Idempotence Testing
+
+Run `./setup.sh --idempotence` to verify that the playbook is idempotent:
+
+- Executes the playbook in check mode
+- Analyzes if any tasks would change the system when run again
+- Provides detailed feedback on which tasks might not be idempotent
+- Helps ensure your setup is reproducible and maintainable
+
+An idempotent playbook ensures that running it multiple times won't make unnecessary changes, which is critical for:
+
+- Consistent environments
+- Predictable updates
+- Reduced risk when applying changes
+- Faster execution on subsequent runs
 
 ## Private Configurations
 
@@ -142,6 +163,9 @@ ansible-playbook -K test.yml
 
 # Run the validation playbook
 ansible-playbook -K validate.yml
+
+# Run the idempotence test playbook
+ansible-playbook -K idempotence.yml
 ```
 
 ## Structure
@@ -150,6 +174,7 @@ ansible-playbook -K validate.yml
 ├── osx.yml               # Main playbook
 ├── test.yml              # Test playbook for verifying installation
 ├── validate.yml          # Validation playbook for code quality
+├── idempotence.yml       # Idempotence test playbook
 ├── setup.sh              # Helper script for easy execution
 ├── vars/
 │   └── main.yml          # Global variables
@@ -159,6 +184,12 @@ ansible-playbook -K validate.yml
     ├── adambware.homebrew-packages/
     └── ...
 ```
+
+The project follows Ansible best practices with a clean structure:
+- Only includes necessary files and directories
+- Removes empty/unused vars directories
+- Uses defaults for user-configurable variables
+- Maintains a consistent structure across all roles
 
 ## Extending the Playbook
 
@@ -177,6 +208,18 @@ If you encounter issues:
 2. Run with `-vvv` for verbose output: `./setup.sh -vvv`
 3. Check the logs for errors
 4. Run the test playbook to verify your setup: `./setup.sh --test`
+5. Run the idempotence test to identify tasks that are changing unexpectedly: `./setup.sh --idempotence`
+
+### Check Mode
+
+The `--check` option performs a complete dry run without making any changes to your system:
+
+- No packages will be installed or updated
+- No files will be created or modified
+- No Homebrew updates will be performed
+- No system settings will be changed
+
+This is useful for previewing what would happen during a real run and is completely safe to use.
 
 ## Acknowledgments
 

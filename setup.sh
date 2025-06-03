@@ -115,7 +115,8 @@ fi
 # Add check flag if specified
 if [[ -n "$CHECK" ]]; then
   CMD="$CMD $CHECK"
-  print_message "Running in check mode (no changes will be made)..."
+  print_message "Running in check mode (NO changes will be made)..."
+  print_message "This is a dry run only - Homebrew will not update and no packages will be installed."
 fi
 
 print_message "Running: $CMD"
@@ -130,7 +131,12 @@ if [[ -z "$CHECK" ]]; then
     print_message "Validation completed!"
   elif [[ "$PLAYBOOK" == "test.yml" ]]; then
     print_message "Tests completed!"
+  elif [[ "$PLAYBOOK" == "idempotence.yml" ]]; then
+    print_message "Idempotence test completed!"
+    print_message "Review the output above to see if any tasks would have changed."
   fi
 else
   print_message "Check completed. No changes were made."
+  print_message "The output above shows what would have changed if this was a real run."
+  print_message "Run without --check to apply these changes."
 fi
