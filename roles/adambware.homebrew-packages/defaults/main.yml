@@ -10,39 +10,17 @@ brew_taps:
 # Common Homebrew packages to install
 brew_packages:
   # Shell utilities
-  - bash
-  - zsh
-  - wget
-  - curl
   - jq
-  - yq
   - htop
   - tmux
-  - tree
   - ripgrep
-  - fd
-  - bat
-  - fzf
-  - exa
   
   # Development tools
   - git
   - git-lfs
   - gh
-  - neovim
-  - vim
-  
-  # Languages and runtimes
-  - python
-  - pyenv
-  - rbenv
-  - ruby-build
-  - go
-  - node
   
   # Cloud and infrastructure
-  - awscli
-  - terraform
   - kubectl
   
   # Security tools

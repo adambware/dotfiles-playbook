@@ -7,10 +7,6 @@ casks:
   - alfred
   - bartender
   - rectangle
-  - iterm2
-  - the-unarchiver
-  - stats
-  - raycast
   
   # Browsers
   - firefox
@@ -27,13 +23,10 @@ casks:
   
   # Cloud tools
   - google-cloud-sdk
-  - aws-vault
   
   # Communication & Productivity
-  - slack
   - zoom
   - discord
-  - notion
   
   # Media
   - spotify
