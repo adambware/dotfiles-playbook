@@ -45,14 +45,8 @@ print_status() {
 
 # Error handling function
 handle_error() {
-  print_error "An error occurred during execution!"
-  print_error "Command: $BASH_COMMAND"
-  print_error "Line: $1"
-  print_error "Exit code: $2"
-  
-  print_message "For help, please check the TESTING.md file or run:"
-  print_message "./setup.sh --help"
-  
+  print_error "An error occurred: $BASH_COMMAND (line $1, exit code $2)"
+  print_message "For help, run: ./setup.sh --help"
   exit $2
 }
 
@@ -221,14 +215,13 @@ while [[ $# -gt 0 ]]; do
       echo "  --check             Run in check mode (dry run, no changes)"
       echo "  --validate          Run validation checks on playbook"
       echo "  --test              Run tests to verify installation"
+      echo "  --integration-test  Run integration tests between roles"
+      echo "  --version-test      Run macOS version-specific tests"
       echo "  --role=ROLE_NAME    Run tests for a specific role"
       echo "  --idempotence       Test if playbook is idempotent"
-      echo "  -v, --verbose       Enable verbose output (level 1)"
-      echo "  -vv                 Enable more verbose output (level 2)"
-      echo "  -vvv                Enable maximum verbosity (level 3)"
+      echo "  -v, --verbose       Enable verbose output"
       echo "  --output=FILE       Save output to specified file"
       echo "  --os-compat-test    Run OS compatibility tests"
-      echo "  --summary           Show summary of results at the end"
       echo "  --help              Display this help message"
       exit 0
       ;;
@@ -307,16 +300,18 @@ if [[ -z "$CHECK" ]]; then
     print_message "macOS setup complete! 🎉"
     print_message "You may want to restart your Mac to ensure all changes take effect."
   elif [[ "$PLAYBOOK" == "validate.yml" ]]; then
-    print_message "Validation completed!"
+    print_message "Validation completed! ✓"
   elif [[ "$PLAYBOOK" == "test.yml" ]]; then
-    print_message "Tests completed!"
+    print_message "Tests completed! ✅"
   elif [[ "$PLAYBOOK" == "idempotence.yml" ]]; then
-    print_message "Idempotence test completed!"
-    print_message "Review the output above to see if any tasks would have changed."
+    print_message "Idempotence test completed! 🔄"
+  elif [[ "$PLAYBOOK" == "integration_tests.yml" ]]; then
+    print_message "Integration tests completed! 🔗"
+  elif [[ "$PLAYBOOK" == "macos_version_tests.yml" ]]; then
+    print_message "macOS version tests completed! 🍎"
   fi
 else
   print_message "Check completed. No changes were made."
-  print_message "Run without --check to apply these changes."
 fi
 
 # Final message if output was saved to file

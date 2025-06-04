@@ -161,7 +161,4 @@
             TEST_TAGS=tag1,tag2 ./setup.sh --idempotence
           {% else %}
           Congratulations! Your playbook is fully idempotent.
-          
-          This means you can run it multiple times without making unnecessary changes,
-          which is ideal for configuration management and automation.
           {% endif %}

@@ -137,39 +137,24 @@
         msg: |
           ✅ macOS version-specific tests completed
           
-          Testing on macOS {{ ansible_distribution_version }}
+          Testing on macOS {{ ansible_distribution_version }} ({{ ansible_architecture }})
           
           {% if is_monterey %}
-          Monterey specific features:
-            - Window management: {{ "✅ OK" if monterey_window_mgr.rc == 0 else "❌ Failed" }}
-            - Shortcuts: {{ "✅ OK" if monterey_shortcuts.rc == 0 else "❌ Failed" }}
-            - Focus: {{ "✅ OK" if monterey_focus.rc == 0 else "❌ Failed" }}
+          Monterey: {{ "✅ OK" if monterey_window_mgr.rc == 0 and monterey_shortcuts.rc == 0 else "❌ Issues detected" }}
           {% endif %}
           
           {% if is_ventura %}
-          Ventura specific features:
-            - Stage Manager: {{ "✅ OK" if ventura_stage_mgr is defined else "⚠️ Not tested" }}
-            - System Settings: {{ "✅ OK" if ventura_settings.rc == 0 else "❌ Failed" }}
-            - Focus modes: {{ "✅ OK" if ventura_focus is defined else "⚠️ Not tested" }}
+          Ventura: {{ "✅ OK" if ventura_settings.rc == 0 else "❌ Issues detected" }}
           {% endif %}
           
           {% if is_sonoma %}
-          Sonoma specific features:
-            - Lock Screen: {{ "✅ OK" if sonoma_lock.rc == 0 else "❌ Failed" }}
-            - Widgets: {{ "✅ OK" if sonoma_widgets is defined else "⚠️ Not tested" }}
-            - Safari: {{ "✅ OK" if sonoma_safari.rc == 0 else "❌ Failed" }}
+          Sonoma: {{ "✅ OK" if sonoma_lock.rc == 0 and sonoma_safari.rc == 0 else "❌ Issues detected" }}
           {% endif %}
           
           {% if is_future %}
-          Future macOS compatibility:
-            - Basic settings: {{ "✅ OK" if future_settings.rc == 0 else "❌ Failed" }}
+          Future macOS: {{ "✅ OK" if future_settings.rc == 0 else "❌ Issues detected" }}
           {% endif %}
           
-          Architecture-specific settings:
-          {% if ansible_architecture == "arm64" %}
-            - Rosetta 2: {{ "✅ Installed" if rosetta_check.rc == 0 else "⚠️ Not installed" }}
-          {% else %}
-            - Intel settings: ✅ OK
-          {% endif %}
+          Architecture: {{ "✅ OK" if (ansible_architecture == "arm64" and rosetta_check.rc == 0) or ansible_architecture == "x86_64" else "⚠️ Rosetta not installed" }}
       
       tags: ['version', 'summary']

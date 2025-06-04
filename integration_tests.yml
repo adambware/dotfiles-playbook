@@ -125,25 +125,9 @@
         msg: |
           ✅ All integration tests passed!
           
-          Homebrew chain:
-            - Homebrew installed: {{ "✅ OK" if brew_check.rc == 0 else "❌ Failed" }}
-            - Formulas installed: {{ "✅ OK" if brew_formulas.rc == 0 else "❌ Failed" }}
-            - Casks installed: {{ "✅ OK" if brew_casks.rc == 0 else "❌ Failed" }}
-            - Architecture prefix: {{ "✅ OK" if brew_prefix is defined else "❌ Failed" }}
-            
-          Development environment:
-            - Python: {{ "✅ OK" if python_check.rc == 0 else "❌ Failed" }}
-            - Ruby: {{ "✅ OK" if ruby_check.rc == 0 else "❌ Failed" }}
-            - Node.js: {{ "✅ OK" if node_check.rc == 0 else "❌ Failed" }}
-            - Shell integration: {{ "✅ OK" if shell_integration.rc == 0 else "❌ Failed" }}
-            
-          Shell environment:
-            - ZSH default: {{ "✅ OK" if default_shell is defined and '/zsh' in default_shell.stdout else "❌ Failed" }}
-            - Oh-My-ZSH: {{ "✅ OK" if oh_my_zsh.stat.exists else "❌ Failed" }}
-            - Environment variables: {{ "✅ OK" if env_vars.rc == 0 else "❌ Failed" }}
-            
-          macOS configuration:
-            - Finder settings: {{ "✅ OK" if finder_settings.rc == 0 else "❌ Failed" }}
-            - Security settings: {{ "✅ OK" if security_settings.rc == 0 else "❌ Failed" }}
+          Homebrew chain: {{ "✅ OK" if brew_check.rc == 0 and brew_formulas.rc == 0 and brew_casks.rc == 0 else "❌ Failed" }}
+          Development env: {{ "✅ OK" if python_check.rc == 0 and ruby_check.rc == 0 and node_check.rc == 0 else "❌ Failed" }}
+          Shell environment: {{ "✅ OK" if default_shell is defined and oh_my_zsh.stat.exists else "❌ Failed" }}
+          macOS configuration: {{ "✅ OK" if finder_settings.rc == 0 else "❌ Failed" }}
       
       tags: ['integration', 'summary']

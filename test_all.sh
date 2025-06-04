@@ -134,11 +134,7 @@ if [ -n "$FAILED_ROLES" ]; then
 fi
 log_result "Full results available at: $TEST_DIR"
 
-echo
 print_message "Testing complete! Results saved to $TEST_DIR"
 
-if [ -n "$FAILED_ROLES" ]; then
-  exit 1
-else
-  exit 0
-fi
+# Exit with appropriate code
+[ -z "$FAILED_ROLES" ]
