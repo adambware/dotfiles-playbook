@@ -29,6 +29,22 @@ if [[ "$(uname)" != "Darwin" ]]; then
   exit 1
 fi
 
+# Check macOS version
+MACOS_VERSION=$(sw_vers -productVersion)
+MACOS_MAJOR=$(echo $MACOS_VERSION | cut -d. -f1)
+MACOS_MINOR=$(echo $MACOS_VERSION | cut -d. -f2)
+
+if [[ "$MACOS_MAJOR" -lt 12 ]]; then
+  print_warning "This playbook is designed for macOS Monterey (12.0) or later."
+  print_warning "You are running macOS $MACOS_VERSION which may not be fully supported."
+  read -p "Continue anyway? (y/n) " -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    print_message "Exiting. Please upgrade to macOS Monterey or later."
+    exit 0
+  fi
+fi
+
 # Check for Ansible
 if ! command -v ansible >/dev/null 2>&1; then
   print_warning "Ansible not found. Attempting to install..."
@@ -81,6 +97,11 @@ while [[ $# -gt 0 ]]; do
       PLAYBOOK="test.yml"
       shift
       ;;
+    --role=*)
+      ROLE="${1#*=}"
+      export TEST_ROLE="$ROLE"
+      shift
+      ;;
     --idempotence)
       PLAYBOOK="idempotence.yml"
       shift
@@ -93,6 +114,7 @@ while [[ $# -gt 0 ]]; do
       echo "  --check             Run in check mode (dry run, no changes)"
       echo "  --validate          Run validation checks on playbook"
       echo "  --test              Run tests to verify installation"
+      echo "  --role=ROLE_NAME    Run tests for a specific role"
       echo "  --idempotence       Test if playbook is idempotent"
       echo "  --help              Display this help message"
       exit 0

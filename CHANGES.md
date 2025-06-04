@@ -19,6 +19,29 @@
 
 - **OSX Role:**
   - Replaced shell commands with Ansible modules for folder visibility
+  
+- **Private Role:**
+  - Improved SSH key management with proper idempotence
+  - Enhanced Git configuration with existing state detection
+  - Added proper file comparison for configuration files
+  - Improved shell aliases with content comparison
+
+### 2. Comprehensive Testing Framework
+
+- **Enhanced Idempotence Testing:**
+  - Developed advanced idempotence test that runs playbook twice
+  - Added detailed reporting of non-idempotent tasks
+  - Added support for testing specific roles and tags
+
+- **Role-Specific Testing:**
+  - Created dedicated test for private role functionality
+  - Added integration with main test playbook
+  - Added test execution via `--role` parameter
+
+- **Testing Documentation:**
+  - Created comprehensive TESTING.md guide
+  - Updated README with detailed testing instructions
+  - Added examples for all testing scenarios
   - Added proper state checking before making changes
 
 - **Homebrew-Casks Role:**

@@ -9,6 +9,11 @@ user_email: "your.email@example.com"  # Update this with your email
 # Architecture detection (will be automatically determined)
 is_apple_silicon: "{{ ansible_architecture == 'arm64' }}"
 
+# macOS version detection
+macos_major_version: "{{ ansible_distribution_version.split('.')[0] | int }}"
+macos_minor_version: "{{ ansible_distribution_version.split('.')[1] | int }}"
+is_monterey_or_earlier: "{{ macos_major_version == 12 or (macos_major_version == 11) }}"
+
 # Feature flags
 setup_private_configs: true  # Set to false to skip private configurations
 enable_dark_mode: true

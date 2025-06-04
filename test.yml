@@ -17,12 +17,35 @@
           - "  - Distribution: {{ ansible_distribution }} {{ ansible_distribution_version }}"
           - "  - User: {{ main_username }}"
           - "  - Homebrew path: {{ homebrew_prefix }}"
+    
+    - name: Verify macOS version compatibility
+      ansible.builtin.debug:
+        msg: "WARNING: This playbook is designed for macOS Monterey (12.0) or later. Current version: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+      when: ansible_distribution == "MacOSX" and ansible_distribution_version is version('12.0', '<')
 
   roles:
     - role: adambware.test
       tags: ['test']
 
+  tasks:
+    # Run specific role tests if requested
+    - name: Run private role tests
+      ansible.builtin.include_tasks: roles/adambware.private/tests/test_private.yml
+      when: 
+        - setup_private_configs | default(true)
+        - specific_role is not defined or specific_role == 'adambware.private'
+      tags: ['private', 'test-private']
+
   post_tasks:
+    - name: Test idempotence
+      ansible.builtin.debug:
+        msg: |
+          To test idempotence of the playbook, run:
+          ./setup.sh --idempotence
+          
+          This will help identify any tasks that might change when run multiple times.
+          For detailed information on testing, see TESTING.md.
+
     - name: Show success message
       ansible.builtin.debug:
         msg: "All tests completed successfully! 🎉"

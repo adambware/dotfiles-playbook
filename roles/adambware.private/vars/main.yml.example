@@ -69,38 +69,9 @@ private_git_config:
   push.autoSetupRemote: "true"
   core.excludesfile: "{{ ansible_env.HOME }}/.gitignore_global"
 
-# Private environment variables to add to shell config
-private_env_vars:
-  - "export AWS_PROFILE=default"
-  - "export GITHUB_TOKEN=your_github_token"
-  - "export NPM_TOKEN=your_npm_token"
-  - "export JAVA_HOME=/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home"
-  - "export GOPATH={{ ansible_env.HOME }}/go"
-  - "export PATH=$GOPATH/bin:$PATH"
-  - "export ANDROID_HOME={{ ansible_env.HOME }}/Library/Android/sdk"
-  - "export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH"
-
 # Private shell aliases
 private_shell_aliases:
   - "alias dc='docker-compose'"
   - "alias k='kubectl'"
   - "alias tf='terraform'"
   - "alias aws-login='aws sso login --profile default'"
-
-# Private VS Code extensions to install
-private_vscode_extensions:
-  - "ms-python.python"
-  - "ms-azuretools.vscode-docker"
-  - "ms-kubernetes-tools.vscode-kubernetes-tools"
-  - "hashicorp.terraform"
-  - "redhat.vscode-yaml"
-  - "esbenp.prettier-vscode"
-  - "dbaeumer.vscode-eslint"
-
-# Private VPN configurations
-private_vpn_configs:
-  - name: "Company VPN"
-    type: "openvpn"
-    config_file: "files/vpn/company_vpn.ovpn"
-    credentials_file: "files/vpn/company_vpn_credentials.txt"
-    autoconnect: false

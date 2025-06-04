@@ -4,7 +4,7 @@ Installs Python via pyenv with support for managing multiple Python versions.
 
 ## Requirements
 
-- macOS (Big Sur or later)
+- macOS (Monterey 12.0 or later)
 - Homebrew installed (provided by adambware.homebrew-install role)
 - Ansible 2.10+
 

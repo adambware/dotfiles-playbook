@@ -1,0 +1,41 @@
+---
+# Homebrew packages and casks tasks
+
+- name: Check if private Homebrew packages are installed
+  ansible.builtin.command: brew list --formula {{ item }}
+  register: brew_packages_check
+  with_items: "{{ private_brew_packages | default([]) }}"
+  when: private_brew_packages is defined
+  changed_when: false
+  failed_when: false
+  loop_control:
+    label: "{{ item }}"
+
+- name: Install private Homebrew packages
+  community.general.homebrew:
+    name: "{{ item.item }}"
+    state: present
+  with_items: "{{ brew_packages_check.results | default([]) }}"
+  when: 
+    - private_brew_packages is defined
+    - item.rc != 0
+
+- name: Check if private Homebrew casks are installed
+  ansible.builtin.command: brew list --cask {{ item }}
+  register: brew_casks_check
+  with_items: "{{ private_brew_casks | default([]) }}"
+  when: private_brew_casks is defined
+  changed_when: false
+  failed_when: false
+  loop_control:
+    label: "{{ item }}"
+
+- name: Install private Homebrew casks
+  community.general.homebrew_cask:
+    name: "{{ item.item }}"
+    state: present
+    install_options: "appdir=/Applications"
+  with_items: "{{ brew_casks_check.results | default([]) }}"
+  when: 
+    - private_brew_casks is defined
+    - item.rc != 0

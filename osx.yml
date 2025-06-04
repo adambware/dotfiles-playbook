@@ -1,6 +1,5 @@
 ---
 # MacOS Setup Playbook
-# Updated for modern Ansible and macOS
 
 - name: "Setup macOS environment"
   hosts: localhost

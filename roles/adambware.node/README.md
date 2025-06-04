@@ -4,7 +4,7 @@ Installs Node.js and related tools on macOS.
 
 ## Requirements
 
-- macOS (Big Sur or later)
+- macOS (Monterey 12.0 or later)
 - Homebrew installed (provided by adambware.homebrew-install role)
 - Ansible 2.10+
 

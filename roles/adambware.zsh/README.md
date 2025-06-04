@@ -4,7 +4,7 @@ Configures the built-in ZSH shell with Oh My Zsh for an optimal command-line exp
 
 ## Requirements
 
-- macOS (Big Sur or later, which includes ZSH by default)
+- macOS (Monterey 12.0 or later, which includes ZSH by default)
 - Ansible 2.10+
 
 ## Role Variables

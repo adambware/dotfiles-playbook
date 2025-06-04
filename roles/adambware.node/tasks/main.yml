@@ -13,7 +13,7 @@
 
 - name: Install n (Node Version Manager)
   ansible.builtin.shell: >
-    curl -L https://git.io/n-install | bash -s -- -y {{ node_lts_version }}
+    curl -L https://raw.githubusercontent.com/tj/n/master/bin/n-install | bash -s -- -y {{ node_lts_version }}
   args:
     creates: "{{ ansible_env.HOME }}/.n"
   when: not n_check.stat.exists and not ansible_check_mode

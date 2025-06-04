@@ -1,0 +1,22 @@
+---
+# defaults file for adambware.private
+
+# SSH key generation defaults
+ssh_keys_to_generate: []
+  # Example:
+  # - path: "{{ ansible_env.HOME }}/.ssh/id_ed25519"
+  #   type: "ed25519"
+  #   passphrase: ""
+  #   comment: "your.name@example.com"
+
+# SSH keys to add to the SSH agent
+ssh_keys_to_add_to_agent: []
+  # Example:
+  # - "{{ ansible_env.HOME }}/.ssh/id_ed25519"
+  # - "{{ ansible_env.HOME }}/.ssh/id_rsa"
+
+# SSH known hosts to add
+ssh_known_hosts: []
+  # Example:
+  # - hostname: "github.com"
+  # - hostname: "gitlab.com"

@@ -18,7 +18,7 @@ This Ansible playbook automates the setup of a macOS development environment. It
 
 ## Requirements
 
-- macOS (Big Sur or later)
+- macOS (Monterey 12.0 or later)
 - Administrator access
 
 ## Quick Start
@@ -90,6 +90,27 @@ To customize:
 ## Testing and Validation
 
 This playbook includes comprehensive testing and validation:
+
+### Enhanced Validation and Testing Commands
+
+```bash
+# Run validation (syntax checks)
+./setup.sh --validate
+
+# Run tests to verify installation 
+./setup.sh --test
+
+# Test a specific role
+./setup.sh --test --role=adambware.private
+
+# Test idempotence (run playbook twice, verify no changes on second run)
+./setup.sh --idempotence
+
+# Test idempotence of a specific role
+./setup.sh --idempotence --role=adambware.private
+```
+
+For detailed testing information, see [TESTING.md](TESTING.md).
 
 ### Validation
 

@@ -1,59 +1,109 @@
 ---
-# Idempotence test playbook
-# Use this to verify that running the playbook multiple times doesn't make changes
+# Advanced Idempotence test playbook
+# This runs the playbook twice to verify that the second run makes no changes
 
-- name: "Test idempotence of macOS setup"
+- name: "Advanced idempotence testing for macOS setup"
   hosts: localhost
   connection: local
   gather_facts: true
   vars_files:
     - vars/main.yml
+  vars:
+    test_tags: "{{ lookup('env', 'TEST_TAGS') | default('') }}"
+    test_role: "{{ lookup('env', 'TEST_ROLE') | default('') }}"
 
   pre_tasks:
     - name: Display system information
       ansible.builtin.debug:
         msg: 
-          - "Running idempotence test for macOS setup"
-          - "This will execute the playbook with --check mode to test idempotence"
+          - "Running advanced idempotence test for macOS setup"
+          - "This will execute the playbook twice to ensure the second run makes no changes"
           - "Architecture: {{ ansible_architecture }}"
           - "Distribution: {{ ansible_distribution }} {{ ansible_distribution_version }}"
-          - "NOTE: No changes will be made to your system during this test"
+          - "{% if test_tags %}Testing only tags: {{ test_tags }}{% endif %}"
+          - "{% if test_role %}Testing only role: {{ test_role }}{% endif %}"
 
   tasks:
-    - name: Run the playbook in check mode
-      ansible.builtin.command: >
-        ansible-playbook -K osx.yml --check
-      register: idempotence_test
+    - name: Set playbook command based on test configuration
+      ansible.builtin.set_fact:
+        playbook_cmd: >-
+          ansible-playbook osx.yml --skip-tags=never
+          {% if test_tags %} --tags={{ test_tags }}{% endif %}
+          {% if test_role %} --limit={{ test_role }}{% endif %}
+
+    - name: First run - Execute the playbook (will make changes)
+      ansible.builtin.command: "{{ playbook_cmd }}"
+      register: first_run
       changed_when: false
 
-    - name: Check for changed tasks in output
-      ansible.builtin.shell: echo "{{ idempotence_test.stdout }}" | grep -c "changed="
-      register: changed_count
+    - name: Display first run summary
+      ansible.builtin.debug:
+        msg: |
+          First run completed with:
+          Changed tasks: {{ first_run.stdout | regex_search('changed=[0-9]+') | default('changed=0') }}
+          Ok tasks: {{ first_run.stdout | regex_search('ok=[0-9]+') | default('ok=0') }}
+
+    - name: Second run - Execute the playbook again (should be idempotent)
+      ansible.builtin.command: "{{ playbook_cmd }}"
+      register: second_run
+      changed_when: false
+
+    - name: Parse changed tasks from second run
+      ansible.builtin.set_fact:
+        changed_count: "{{ second_run.stdout | regex_search('changed=([0-9]+)', '\\1') | default('0') }}"
+        changed_tasks: []
+
+    - name: Extract non-idempotent tasks
+      ansible.builtin.shell: >
+        echo '{{ second_run.stdout }}' | grep -B 2 "changed:" | grep -v "\-\-" | grep -v "changed:" | awk '{$1=""; print $0}'
+      register: non_idempotent_task_list
+      when: changed_count|int > 0
       changed_when: false
       failed_when: false
 
-    - name: Display idempotence test results
+    - name: Process non-idempotent tasks
+      ansible.builtin.set_fact:
+        changed_tasks: "{{ non_idempotent_task_list.stdout_lines | default([]) }}"
+      when: changed_count|int > 0
+
+    - name: Display idempotence test results with detailed information
       ansible.builtin.debug:
         msg: |
           Idempotence Test Results:
           
-          Changed tasks: {{ changed_count.stdout }}
+          Changed tasks on second run: {{ changed_count }}
           
-          {% if changed_count.stdout|int > 0 %}
-          ⚠️ The playbook is not fully idempotent. Some tasks would make changes when run again.
+          {% if changed_count|int > 0 %}
+          ⚠️ The playbook is not fully idempotent. The following tasks made changes when run again:
           
-          Consider reviewing the roles that contain tasks that would make changes.
-          For optimal idempotence, all tasks should detect if changes are needed before making them.
+          {% for task in changed_tasks %}
+          - {{ task }}
+          {% endfor %}
+          
+          Consider reviewing these tasks for better state detection.
           {% else %}
-          ✅ The playbook is fully idempotent! No tasks would make changes when run again.
+          ✅ The playbook is fully idempotent! No tasks made changes when run again.
           {% endif %}
       
   post_tasks:
-    - name: Suggest next steps
+    - name: Suggest improvements for non-idempotent tasks
       ansible.builtin.debug:
         msg: |
-          To improve idempotence:
-          1. Add proper changed_when and failed_when directives to all tasks
-          2. Use check modes and registers to detect if changes are needed
-          3. Prefer Ansible modules over shell commands where possible
-          4. Use creates, removes, or other conditionals for commands that can't easily check state
+          Tips to improve idempotence for common task types:
+          
+          For command/shell tasks:
+            - Add changed_when with a condition that detects real changes
+            - Use creates/removes parameters for file creation tasks
+            - Use register + conditions to run only when needed
+          
+          For file operations:
+            - Use mode parameters with explicit permissions
+            - Use the copy module's checksum feature
+          
+          For package managers:
+            - Specify exact versions when needed
+            - Use state: present only when appropriate
+            
+          For configuration files:
+            - Consider using templates with strict validation
+            - Use the lineinfile/blockinfile modules with check_mode

@@ -4,9 +4,14 @@
 - name: Validate Ansible playbook and roles
   hosts: localhost
   connection: local
-  gather_facts: false
+  gather_facts: true
   
   tasks:
+    - name: Check macOS version compatibility
+      ansible.builtin.debug:
+        msg: "WARNING: This playbook is designed for macOS Monterey (12.0) or later. Current version: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+      when: ansible_distribution == "MacOSX" and ansible_distribution_version is version('12.0', '<')
+      
     - name: Check syntax of main playbook
       ansible.builtin.command: ansible-playbook --syntax-check osx.yml
       changed_when: false
