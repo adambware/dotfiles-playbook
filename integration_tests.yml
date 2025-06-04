@@ -1,0 +1,149 @@
+---
+# Integration tests for dotfiles-playbook
+# This tests interactions between related roles
+
+- name: "Integration tests between roles"
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars_files:
+    - vars/main.yml
+  
+  pre_tasks:
+    - name: Display test information
+      ansible.builtin.debug:
+        msg: 
+          - "Running integration tests between roles"
+          - "Architecture: {{ ansible_architecture }}"
+          - "Distribution: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+  tasks:
+    # Test homebrew chain: homebrew-install -> homebrew-packages -> homebrew-casks
+    - name: Verify homebrew installation chain
+      block:
+        - name: Verify homebrew is installed
+          ansible.builtin.command: which brew
+          register: brew_check
+          changed_when: false
+          failed_when: brew_check.rc != 0
+          
+        - name: Verify core packages are installed
+          ansible.builtin.command: brew list --formula
+          register: brew_formulas
+          changed_when: false
+          failed_when: brew_formulas.rc != 0
+          
+        - name: Verify core casks are installed
+          ansible.builtin.command: brew list --cask
+          register: brew_casks
+          changed_when: false
+          failed_when: brew_casks.rc != 0
+          
+        - name: Check homebrew prefix matches architecture
+          ansible.builtin.command: brew --prefix
+          register: brew_prefix
+          changed_when: false
+          failed_when: >
+            (ansible_architecture == 'arm64' and brew_prefix.stdout != '/opt/homebrew') or
+            (ansible_architecture == 'x86_64' and brew_prefix.stdout != '/usr/local')
+      
+      tags: ['integration', 'homebrew']
+      
+    # Test development environment chain: python -> ruby -> node
+    - name: Verify development environment integration
+      block:
+        - name: Verify Python development environment
+          ansible.builtin.shell: command -v python3 && python3 --version
+          register: python_check
+          changed_when: false
+          failed_when: python_check.rc != 0
+          
+        - name: Verify Ruby development environment
+          ansible.builtin.shell: command -v ruby && ruby --version
+          register: ruby_check
+          changed_when: false
+          failed_when: ruby_check.rc != 0
+          
+        - name: Verify Node.js development environment
+          ansible.builtin.shell: command -v node && node --version
+          register: node_check
+          changed_when: false
+          failed_when: node_check.rc != 0
+          
+        # Verify shell integration for dev environments
+        - name: Check shell integration for development environments
+          ansible.builtin.shell: grep -E 'pyenv|rbenv|nvm' {{ ansible_env.HOME }}/.zshrc
+          register: shell_integration
+          changed_when: false
+          failed_when: shell_integration.rc != 0
+      
+      tags: ['integration', 'development']
+      
+    # Test zsh and shell environment
+    - name: Verify shell environment setup
+      block:
+        - name: Verify zsh is default shell
+          ansible.builtin.shell: echo $SHELL
+          register: default_shell
+          changed_when: false
+          failed_when: "'/zsh' not in default_shell.stdout"
+          
+        - name: Verify oh-my-zsh is installed
+          ansible.builtin.stat:
+            path: "{{ ansible_env.HOME }}/.oh-my-zsh"
+          register: oh_my_zsh
+          failed_when: not oh_my_zsh.stat.exists
+          
+        - name: Verify environment variables are set
+          ansible.builtin.shell: env | grep -E 'PATH|EDITOR|LANG'
+          register: env_vars
+          changed_when: false
+          failed_when: env_vars.rc != 0
+      
+      tags: ['integration', 'shell']
+      
+    # Test macOS settings and configurations
+    - name: Verify macOS configuration
+      block:
+        - name: Check OS settings from osx role
+          ansible.builtin.command: defaults read com.apple.finder
+          register: finder_settings
+          changed_when: false
+          failed_when: finder_settings.rc != 0
+          
+        - name: Check OS security settings
+          ansible.builtin.command: defaults read com.apple.security
+          register: security_settings
+          changed_when: false
+          failed_when: security_settings.rc != 0 and ansible_distribution_version is version('13.0', '>=')
+      
+      tags: ['integration', 'osx']
+    
+    # Print test results
+    - name: Display test results
+      ansible.builtin.debug:
+        msg: |
+          ✅ All integration tests passed!
+          
+          Homebrew chain:
+            - Homebrew installed: {{ "✅ OK" if brew_check.rc == 0 else "❌ Failed" }}
+            - Formulas installed: {{ "✅ OK" if brew_formulas.rc == 0 else "❌ Failed" }}
+            - Casks installed: {{ "✅ OK" if brew_casks.rc == 0 else "❌ Failed" }}
+            - Architecture prefix: {{ "✅ OK" if brew_prefix is defined else "❌ Failed" }}
+            
+          Development environment:
+            - Python: {{ "✅ OK" if python_check.rc == 0 else "❌ Failed" }}
+            - Ruby: {{ "✅ OK" if ruby_check.rc == 0 else "❌ Failed" }}
+            - Node.js: {{ "✅ OK" if node_check.rc == 0 else "❌ Failed" }}
+            - Shell integration: {{ "✅ OK" if shell_integration.rc == 0 else "❌ Failed" }}
+            
+          Shell environment:
+            - ZSH default: {{ "✅ OK" if default_shell is defined and '/zsh' in default_shell.stdout else "❌ Failed" }}
+            - Oh-My-ZSH: {{ "✅ OK" if oh_my_zsh.stat.exists else "❌ Failed" }}
+            - Environment variables: {{ "✅ OK" if env_vars.rc == 0 else "❌ Failed" }}
+            
+          macOS configuration:
+            - Finder settings: {{ "✅ OK" if finder_settings.rc == 0 else "❌ Failed" }}
+            - Security settings: {{ "✅ OK" if security_settings.rc == 0 else "❌ Failed" }}
+      
+      tags: ['integration', 'summary']

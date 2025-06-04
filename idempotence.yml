@@ -95,7 +95,10 @@
             "is_idempotent": {{ (changed_count|int == 0) | to_json }}
           }
         dest: "{{ results_file }}"
-      when: changed_count is defined
+        mode: '0644'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+      when: results_file is defined
 
     - name: Display idempotence test results with detailed information
       ansible.builtin.debug:
@@ -123,62 +126,22 @@
         msg: |
           Tips to improve idempotence for common task types:
           
-          For command/shell tasks:
+          Command/shell tasks:
             - Add changed_when with a condition that detects real changes
             - Use creates/removes parameters for file creation tasks
             - Use register + conditions to run only when needed
-            
-            Example:
-              - name: Create a file only if it doesn't exist
-                ansible.builtin.command: touch /path/to/file
-                args:
-                  creates: /path/to/file
-                
-              - name: Check if configuration needs to be updated
-                ansible.builtin.shell: grep -q "setting=value" /etc/config
-                register: config_check
-                changed_when: false
-                failed_when: false
-                
-              - name: Update configuration if needed
-                ansible.builtin.shell: echo "setting=value" >> /etc/config
-                when: config_check.rc != 0
           
-          For file operations:
+          File operations:
             - Use mode parameters with explicit permissions
             - Use the copy module's checksum feature
-            
-            Example:
-              - name: Copy file with explicit mode
-                ansible.builtin.copy:
-                  src: file.txt
-                  dest: /path/to/file.txt
-                  mode: '0644'
-                  owner: "{{ ansible_user_id }}"
-                  group: "{{ ansible_user_gid }}"
           
-          For package managers:
+          Package managers:
             - Specify exact versions when needed
             - Use state: present only when appropriate
             
-            Example:
-              - name: Install package at specific version
-                ansible.builtin.homebrew:
-                  name: package
-                  state: present
-                  version: 1.2.3
-                
-          For configuration files:
-            - Consider using templates with strict validation
-            - Use the lineinfile/blockinfile modules with check_mode
-            
-            Example:
-              - name: Update line in file
-                ansible.builtin.lineinfile:
-                  path: /path/to/file
-                  regexp: '^# setting='
-                  line: 'setting=value'
-                  state: present
+          Configuration files:
+            - Use templates with strict validation
+            - Use lineinfile/blockinfile modules with check_mode
       when: changed_count|int > 0
 
     - name: Provide next steps for action
@@ -202,23 +165,3 @@
           This means you can run it multiple times without making unnecessary changes,
           which is ideal for configuration management and automation.
           {% endif %}
-
-    - name: Save detailed results to file
-      ansible.builtin.copy:
-        content: |
-          {
-            "first_run": {
-              "changed_tasks": "{{ first_run.stdout | regex_search('changed=[0-9]+') | default('changed=0') }}",
-              "ok_tasks": "{{ first_run.stdout | regex_search('ok=[0-9]+') | default('ok=0') }}"
-            },
-            "second_run": {
-              "changed_tasks": "{{ changed_count }}",
-              "task_list": {{ changed_tasks | to_json }}
-            },
-            "idempotence": "{{ 'yes' if changed_count|int == 0 else 'no' }}"
-          }
-        dest: "{{ results_file }}"
-        mode: '0644'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-      when: results_file is defined

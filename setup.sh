@@ -43,13 +43,6 @@ print_status() {
   echo -e "${CYAN}STATUS:${NC} $1"
 }
 
-# Function to save test output to file
-save_output() {
-  if [[ -n "$OUTPUT_FILE" ]]; then
-    echo "$1" >> "$OUTPUT_FILE"
-  fi
-}
-
 # Error handling function
 handle_error() {
   print_error "An error occurred during execution!"
@@ -57,21 +50,8 @@ handle_error() {
   print_error "Line: $1"
   print_error "Exit code: $2"
   
-  # Add more context for specific error codes
-  case $2 in
-    127) print_error "Command not found. Ensure all dependencies are installed." ;;
-    128) print_error "Invalid operation. This might be a permission issue." ;;
-    130) print_message "Process interrupted by user." ;;
-    *)   print_error "Check the error message above for details." ;;
-  esac
-  
-  print_message "For help resolving this issue, please check the TESTING.md file or run:"
+  print_message "For help, please check the TESTING.md file or run:"
   print_message "./setup.sh --help"
-  
-  # Save error to log if output file is specified
-  if [[ -n "$OUTPUT_FILE" ]]; then
-    echo "ERROR: $BASH_COMMAND failed with exit code $2 at line $1" >> "$OUTPUT_FILE"
-  fi
   
   exit $2
 }
@@ -93,21 +73,16 @@ MACOS_MINOR=$(echo $MACOS_VERSION | cut -d. -f2)
 # Set macOS version flag
 if [[ "$MACOS_MAJOR" -eq 12 ]]; then
   MACOS_NAME="Monterey"
-  MACOS_COMPAT="full"
 elif [[ "$MACOS_MAJOR" -eq 13 ]]; then
   MACOS_NAME="Ventura"
-  MACOS_COMPAT="full"
 elif [[ "$MACOS_MAJOR" -eq 14 ]]; then
   MACOS_NAME="Sonoma"
-  MACOS_COMPAT="full"
 elif [[ "$MACOS_MAJOR" -gt 14 ]]; then
   MACOS_NAME="Future"
-  MACOS_COMPAT="experimental"
   print_warning "You are running a future version of macOS ($MACOS_VERSION)."
   print_warning "This playbook has not been fully tested on this version."
 elif [[ "$MACOS_MAJOR" -lt 12 ]]; then
   MACOS_NAME="Legacy"
-  MACOS_COMPAT="partial"
   print_warning "This playbook is designed for macOS Monterey (12.0) or later."
   print_warning "You are running macOS $MACOS_VERSION which may not be fully supported."
   read -p "Continue anyway? (y/n) " -n 1 -r
@@ -118,16 +93,22 @@ elif [[ "$MACOS_MAJOR" -lt 12 ]]; then
   fi
 fi
 
-# Print macOS version information
-print_info "Detected macOS $MACOS_NAME ($MACOS_VERSION) - Compatibility: $MACOS_COMPAT"
+# Print macOS version information if verbose
+if [[ -n "$VERBOSE" ]]; then
+  print_info "Detected macOS $MACOS_NAME ($MACOS_VERSION)"
+fi
 
 # Architecture detection
 if [[ "$(uname -m)" == "arm64" ]]; then
   ARCH="Apple Silicon"
-  print_info "Detected Apple Silicon architecture"
+  if [[ -n "$VERBOSE" ]]; then
+    print_info "Detected Apple Silicon architecture"
+  fi
 else
   ARCH="Intel"
-  print_info "Detected Intel architecture"
+  if [[ -n "$VERBOSE" ]]; then
+    print_info "Detected Intel architecture"
+  fi
 fi
 
 # Check for Ansible
@@ -188,6 +169,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --test)
       PLAYBOOK="test.yml"
+      shift
+      ;;
+    --integration-test)
+      PLAYBOOK="integration_tests.yml"
+      shift
+      ;;
+    --version-test)
+      PLAYBOOK="macos_version_tests.yml"
       shift
       ;;
     --role=*)
@@ -312,58 +301,25 @@ else
   eval "$CMD"
 fi
 
-# Print completion message with enhanced information
+# Print completion message
 if [[ -z "$CHECK" ]]; then
   if [[ "$PLAYBOOK" == "osx.yml" ]]; then
     print_message "macOS setup complete! 🎉"
     print_message "You may want to restart your Mac to ensure all changes take effect."
-    
-    if [[ "$SUMMARY" == "true" ]]; then
-      print_status "Setup Summary:"
-      print_status "  - macOS Version: $MACOS_NAME ($MACOS_VERSION)"
-      print_status "  - Architecture: $ARCH"
-      print_status "  - Roles: ${TAGS:-All}"
-      print_status "  - Mode: Normal"
-    fi
-    
   elif [[ "$PLAYBOOK" == "validate.yml" ]]; then
     print_message "Validation completed!"
-    
-    if [[ "$SUMMARY" == "true" ]]; then
-      print_status "Validation Summary:"
-      print_status "  - macOS Version: $MACOS_NAME ($MACOS_VERSION)"
-      print_status "  - Architecture: $ARCH"
-    fi
-    
   elif [[ "$PLAYBOOK" == "test.yml" ]]; then
     print_message "Tests completed!"
-    
-    if [[ "$SUMMARY" == "true" ]]; then
-      print_status "Test Summary:"
-      print_status "  - macOS Version: $MACOS_NAME ($MACOS_VERSION)"
-      print_status "  - Architecture: $ARCH"
-      print_status "  - Test Roles: ${SPECIFIC_ROLES:-All}"
-      print_status "  - OS Compatibility Test: ${OS_COMPAT_TEST:-No}"
-    fi
-    
   elif [[ "$PLAYBOOK" == "idempotence.yml" ]]; then
     print_message "Idempotence test completed!"
     print_message "Review the output above to see if any tasks would have changed."
-    
-    if [[ "$SUMMARY" == "true" ]]; then
-      print_status "Idempotence Test Summary:"
-      print_status "  - macOS Version: $MACOS_NAME ($MACOS_VERSION)"
-      print_status "  - Architecture: $ARCH"
-      print_status "  - Test Roles: ${SPECIFIC_ROLES:-All}"
-    fi
   fi
 else
   print_message "Check completed. No changes were made."
-  print_message "The output above shows what would have changed if this was a real run."
   print_message "Run without --check to apply these changes."
 fi
 
 # Final message if output was saved to file
 if [[ -n "$OUTPUT_FILE" ]]; then
-  print_message "Complete output has been saved to $OUTPUT_FILE"
+  print_message "Output has been saved to $OUTPUT_FILE"
 fi
