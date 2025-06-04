@@ -76,7 +76,7 @@ The playbook is organized into roles for different aspects of configuration:
 - `adambware.ruby` - Sets up Ruby environment with rbenv
 - `adambware.python` - Sets up Python environment with pyenv
 - `adambware.node` - Sets up Node.js environment with tj/n
-- `adambware.osx` - Configures macOS system preferences
+- `adambware.osx` - Configures macOS system preferences (now with Monterey, Ventura, and Sonoma support)
 - `adambware.auto-updates` - Configures automatic system updates
 - `adambware.private` - Your private configurations (optional)
 - `adambware.test` - Validates that everything is installed correctly
@@ -86,6 +86,8 @@ To customize:
 1. Edit `vars/main.yml` to update main variables
 2. Modify roles with custom variables in their respective configuration files
 3. Run specific roles with tags: `./setup.sh --tags=homebrew,zsh`
+
+For macOS version compatibility details, see [OS_COMPATIBILITY.md](OS_COMPATIBILITY.md)
 
 ## Testing and Validation
 

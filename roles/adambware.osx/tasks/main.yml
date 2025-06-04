@@ -1,197 +1,42 @@
 ---
 # tasks file for adambware.osx
 
-# Modern macOS settings using Ansible modules instead of shell scripts
+# Modernized and modular macOS settings
 
-# General UI/UX
-- name: Set macOS general UI/UX preferences
-  community.general.osx_defaults:
-    domain: "{{ item.domain }}"
-    key: "{{ item.key }}"
-    type: "{{ item.type }}"
-    value: "{{ item.value }}"
-    state: present
-  loop:
-    # Increase window resize speed
-    - { domain: "NSGlobalDomain", key: "NSWindowResizeTime", type: "float", value: 0.001 }
-    # Expand save panel by default
-    - { domain: "NSGlobalDomain", key: "NSNavPanelExpandedStateForSaveMode", type: "bool", value: true }
-    - { domain: "NSGlobalDomain", key: "NSNavPanelExpandedStateForSaveMode2", type: "bool", value: true }
-    # Expand print panel by default
-    - { domain: "NSGlobalDomain", key: "PMPrintingExpandedStateForPrint", type: "bool", value: true }
-    - { domain: "NSGlobalDomain", key: "PMPrintingExpandedStateForPrint2", type: "bool", value: true }
-    # Save to disk (not to iCloud) by default
-    - { domain: "NSGlobalDomain", key: "NSDocumentSaveNewDocumentsToCloud", type: "bool", value: false }
-    # Automatically quit printer app once the print jobs complete
-    - { domain: "com.apple.print.PrintingPrefs", key: "Quit When Finished", type: "bool", value: true }
-    # Disable the "Are you sure you want to open this application?" dialog
-    - { domain: "com.apple.LaunchServices", key: "LSQuarantine", type: "bool", value: false }
-    # Check for software updates daily, not just once per week
-    - { domain: "com.apple.SoftwareUpdate", key: "ScheduleFrequency", type: "int", value: 1 }
+# Detect macOS version and set feature flags
+- name: Check macOS version and set feature flags
+  ansible.builtin.include_tasks: version_check.yml
+  tags: ['osx', 'osx-version']
 
-# Set dark mode if enabled
-- name: Set dark mode
-  community.general.osx_defaults:
-    domain: "NSGlobalDomain"
-    key: "AppleInterfaceStyle"
-    type: "string"
-    value: "Dark"
-    state: present
-  when: enable_dark_mode | default(true)
+- name: Include General UI/UX settings
+  ansible.builtin.include_tasks: general_ui.yml
+  tags: ['osx', 'osx-ui']
 
-# Trackpad, mouse, keyboard, Bluetooth accessories, and input
-- name: Set input device preferences
-  community.general.osx_defaults:
-    domain: "{{ item.domain }}"
-    key: "{{ item.key }}"
-    type: "{{ item.type }}"
-    value: "{{ item.value }}"
-    state: present
-  loop:
-    # Improve Bluetooth audio quality
-    - { domain: "com.apple.BluetoothAudioAgent", key: "Apple Bitpool Min (editable)", type: "int", value: 40 }
-    # Enable full keyboard access for all controls
-    - { domain: "NSGlobalDomain", key: "AppleKeyboardUIMode", type: "int", value: 3 }
-    # Disable auto-correct
-    - { domain: "NSGlobalDomain", key: "NSAutomaticSpellingCorrectionEnabled", type: "bool", value: false }
+- name: Include Input device settings
+  ansible.builtin.include_tasks: input_devices.yml
+  tags: ['osx', 'osx-input']
 
-# Screen settings
-- name: Set screen preferences
-  community.general.osx_defaults:
-    domain: "{{ item.domain }}"
-    key: "{{ item.key }}"
-    type: "{{ item.type }}"
-    value: "{{ item.value }}"
-    state: present
-  loop:
-    # Require password immediately after sleep or screen saver begins
-    - { domain: "com.apple.screensaver", key: "askForPassword", type: "int", value: 1 }
-    - { domain: "com.apple.screensaver", key: "askForPasswordDelay", type: "int", value: 0 }
-    # Save screenshots to the desktop
-    - { domain: "com.apple.screencapture", key: "location", type: "string", value: "{{ ansible_env.HOME }}/Desktop" }
-    # Save screenshots in PNG format
-    - { domain: "com.apple.screencapture", key: "type", type: "string", value: "png" }
-    # Disable shadow in screenshots
-    - { domain: "com.apple.screencapture", key: "disable-shadow", type: "bool", value: true }
-    # Enable subpixel font rendering on non-Apple LCDs
-    - { domain: "NSGlobalDomain", key: "AppleFontSmoothing", type: "int", value: 1 }
+- name: Include Screen settings
+  ansible.builtin.include_tasks: screen.yml
+  tags: ['osx', 'osx-screen']
 
-# Finder settings
-- name: Set Finder preferences
-  community.general.osx_defaults:
-    domain: "{{ item.domain }}"
-    key: "{{ item.key }}"
-    type: "{{ item.type }}"
-    value: "{{ item.value }}"
-    state: present
-  loop:
-    # Set Home folder as the default location for new Finder windows
-    - { domain: "com.apple.finder", key: "NewWindowTarget", type: "string", value: "PfHm" }
-    - { domain: "com.apple.finder", key: "NewWindowTargetPath", type: "string", value: "file://{{ ansible_env.HOME }}/" }
-    # Show icons for hard drives, servers, and removable media on the desktop
-    - { domain: "com.apple.finder", key: "ShowExternalHardDrivesOnDesktop", type: "bool", value: true }
-    - { domain: "com.apple.finder", key: "ShowHardDrivesOnDesktop", type: "bool", value: true }
-    - { domain: "com.apple.finder", key: "ShowMountedServersOnDesktop", type: "bool", value: true }
-    - { domain: "com.apple.finder", key: "ShowRemovableMediaOnDesktop", type: "bool", value: true }
-    # Show all filename extensions
-    - { domain: "NSGlobalDomain", key: "AppleShowAllExtensions", type: "bool", value: true }
-    # Show status bar
-    - { domain: "com.apple.finder", key: "ShowStatusBar", type: "bool", value: true }
-    # Display full POSIX path as Finder window title
-    - { domain: "com.apple.finder", key: "_FXShowPosixPathInTitle", type: "bool", value: true }
-    # When performing a search, search the current folder by default
-    - { domain: "com.apple.finder", key: "FXDefaultSearchScope", type: "string", value: "SCcf" }
-    # Disable the warning when changing a file extension
-    - { domain: "com.apple.finder", key: "FXEnableExtensionChangeWarning", type: "bool", value: false }
-    # Enable spring loading for directories
-    - { domain: "NSGlobalDomain", key: "com.apple.springing.enabled", type: "bool", value: true }
-    # Avoid creating .DS_Store files on network or USB volumes
-    - { domain: "com.apple.desktopservices", key: "DSDontWriteNetworkStores", type: "bool", value: true }
-    - { domain: "com.apple.desktopservices", key: "DSDontWriteUSBStores", type: "bool", value: true }
-    # Use list view in all Finder windows by default
-    - { domain: "com.apple.finder", key: "FXPreferredViewStyle", type: "string", value: "Nlsv" }
-    # Disable the warning before emptying the Trash
-    - { domain: "com.apple.finder", key: "WarnOnEmptyTrash", type: "bool", value: false }
+- name: Include Finder settings
+  ansible.builtin.include_tasks: finder.yml
+  tags: ['osx', 'osx-finder']
 
-# Show the ~/Library folder
-- name: Show the Library folder
-  ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/Library"
-    state: directory
-    attributes: nohidden
-  changed_when: false
+- name: Include Dock settings
+  ansible.builtin.include_tasks: dock.yml
+  tags: ['osx', 'osx-dock']
 
-# Show the /Volumes folder
-- name: Show the Volumes folder
-  ansible.builtin.file:
-    path: "/Volumes"
-    state: directory
-    attributes: nohidden
-  become: yes
-  changed_when: false
+- name: Include Safari settings
+  ansible.builtin.include_tasks: safari.yml
+  tags: ['osx', 'osx-safari']
 
-# Dock settings
-- name: Set Dock preferences
-  community.general.osx_defaults:
-    domain: "{{ item.domain }}"
-    key: "{{ item.key }}"
-    type: "{{ item.type }}"
-    value: "{{ item.value }}"
-    state: present
-  loop:
-    # Show indicator lights for open applications in the Dock
-    - { domain: "com.apple.dock", key: "show-process-indicators", type: "bool", value: true }
-    # Speed up Mission Control animations
-    - { domain: "com.apple.dock", key: "expose-animation-duration", type: "float", value: 0.1 }
-    # Don't automatically rearrange Spaces based on most recent use
-    - { domain: "com.apple.dock", key: "mru-spaces", type: "bool", value: false }
-    # Dock Position on right
-    - { domain: "com.apple.dock", key: "orientation", type: "string", value: "right" }
-    # Disable dock magnification
-    - { domain: "com.apple.dock", key: "magnification", type: "bool", value: false }
-    # Auto-hide dock
-    - { domain: "com.apple.dock", key: "autohide", type: "bool", value: true }
+- name: Include Security settings
+  ansible.builtin.include_tasks: security.yml
+  tags: ['osx', 'osx-security']
 
-# Safari settings
-- name: Set Safari preferences
-  community.general.osx_defaults:
-    domain: "{{ item.domain }}"
-    key: "{{ item.key }}"
-    type: "{{ item.type }}"
-    value: "{{ item.value }}"
-    state: present
-  loop:
-    # Set Safari's home page to about:blank for faster loading
-    - { domain: "com.apple.Safari", key: "HomePage", type: "string", value: "about:blank" }
-    # Prevent Safari from opening 'safe' files automatically after downloading
-    - { domain: "com.apple.Safari", key: "AutoOpenSafeDownloads", type: "bool", value: false }
-    # Enable Safari's debug menu
-    - { domain: "com.apple.Safari", key: "IncludeInternalDebugMenu", type: "bool", value: true }
-    # Enable the Develop menu and the Web Inspector in Safari
-    - { domain: "com.apple.Safari", key: "IncludeDevelopMenu", type: "bool", value: true }
-    - { domain: "com.apple.Safari", key: "WebKitDeveloperExtrasEnabledPreferenceKey", type: "bool", value: true }
-    - { domain: "com.apple.Safari", key: "com.apple.Safari.ContentPageGroupIdentifier.WebKit2DeveloperExtrasEnabled", type: "bool", value: true }
-
-# Privacy & Security
-- name: Check if FileVault is already enabled
-  ansible.builtin.command: fdesetup status
-  register: filevault_status
-  become: yes
-  changed_when: false
-  when: enable_filevault | default(false)
-
-- name: Enable FileVault
-  ansible.builtin.command: fdesetup enable -user "{{ ansible_env.USER }}"
-  become: yes
-  when: 
-    - enable_filevault | default(false)
-    - filevault_status.stdout is defined
-    - "'FileVault is On' not in filevault_status.stdout"
-    - not ansible_check_mode
-  register: filevault_result
-  failed_when: false
-
-# Notify changes to UI services
+# Notify changes to UI services at the end
 - name: Notify UI services of changes
   ansible.builtin.debug:
     msg: "UI changes have been applied and will be active after service restarts"

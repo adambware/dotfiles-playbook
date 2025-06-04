@@ -35,6 +35,11 @@
         - setup_private_configs | default(true)
         - specific_role is not defined or specific_role == 'adambware.private'
       tags: ['private', 'test-private']
+      
+    - name: Run OSX role tests
+      ansible.builtin.include_tasks: roles/adambware.osx/tests/test_osx.yml
+      when: specific_role is not defined or specific_role == 'adambware.osx'
+      tags: ['osx', 'test-osx']
 
   post_tasks:
     - name: Test idempotence

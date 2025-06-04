@@ -19,6 +19,8 @@
 
 - **OSX Role:**
   - Replaced shell commands with Ansible modules for folder visibility
+  - Added checking for existing state in file visibility operations
+  - Improved handler idempotence with failed_when directives
   
 - **Private Role:**
   - Improved SSH key management with proper idempotence
@@ -35,6 +37,7 @@
 
 - **Role-Specific Testing:**
   - Created dedicated test for private role functionality
+  - Added dedicated test for OSX role settings
   - Added integration with main test playbook
   - Added test execution via `--role` parameter
 
@@ -42,6 +45,45 @@
   - Created comprehensive TESTING.md guide
   - Updated README with detailed testing instructions
   - Added examples for all testing scenarios
+
+### 3. Code Reorganization and Structure
+
+- **Private Role:**
+  - Modularized into separate task files for better organization
+  - Created logical separation of tasks by function
+  - Improved variable organization and defaults
+
+- **OSX Role:**
+  - Reorganized into modular task files by functionality
+  - Created version-specific task files for better compatibility
+  - Added extensive variable customization options
+  - Improved file visibility detection with more robust checks
+
+- **Homebrew Roles:**
+  - Updated to use community.general modules
+  - Added better state detection before installation
+
+- **Shell Configuration:**
+  - Improved ZSH configuration with better checks
+  - Added backup functionality for critical files
+
+### 4. macOS Compatibility Enhancements
+
+- **macOS Version Support:**
+  - Added compatibility with macOS Monterey, Ventura, and Sonoma
+  - Created version-specific settings for each OS version
+  - Added version detection and warning system
+  - Implemented conditional features based on OS version
+
+- **Enhanced UI Settings:**
+  - Added support for Sonoma widget customization
+  - Added Ventura-specific privacy controls
+  - Improved screen settings for Retina displays
+
+- **Simplified Language Management:**
+  - Switched from NVM to tj/n for Node.js
+  - Used system ZSH instead of Homebrew version
+  - Streamlined Python and Ruby setups
   - Added proper state checking before making changes
 
 - **Homebrew-Casks Role:**

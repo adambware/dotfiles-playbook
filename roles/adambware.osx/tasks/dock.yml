@@ -1,0 +1,28 @@
+---
+# Dock settings and preferences
+
+- name: Set Dock preferences
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop:
+    # Show indicator lights for open applications in the Dock
+    - { domain: "com.apple.dock", key: "show-process-indicators", type: "bool", value: true }
+    # Speed up Mission Control animations
+    - { domain: "com.apple.dock", key: "expose-animation-duration", type: "float", value: 0.1 }
+    # Don't automatically rearrange Spaces based on most recent use
+    - { domain: "com.apple.dock", key: "mru-spaces", type: "bool", value: false }
+    # Dock Position (left, bottom, right)
+    - { domain: "com.apple.dock", key: "orientation", type: "string", value: "{{ dock_position }}" }
+    # Dock magnification setting
+    - { domain: "com.apple.dock", key: "magnification", type: "bool", value: "{{ dock_magnification }}" }
+    # Auto-hide dock setting
+    - { domain: "com.apple.dock", key: "autohide", type: "bool", value: "{{ dock_auto_hide }}" }
+    # Minimize animation effect
+    - { domain: "com.apple.dock", key: "mineffect", type: "string", value: "{{ dock_minimize_effect | default('genie') }}" }
+    # Show only active applications
+    - { domain: "com.apple.dock", key: "static-only", type: "bool", value: "{{ dock_show_only_active | default(false) }}" }
+  notify: restart dock

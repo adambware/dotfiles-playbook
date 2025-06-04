@@ -1,0 +1,30 @@
+---
+# Screen and screenshot settings
+
+- name: Set screen preferences
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop:
+    # Require password immediately after sleep or screen saver begins
+    - { domain: "com.apple.screensaver", key: "askForPassword", type: "int", value: "{{ 1 if require_password_after_sleep else 0 }}" }
+    - { domain: "com.apple.screensaver", key: "askForPasswordDelay", type: "int", value: "{{ password_delay_seconds | default(0) }}" }
+    # Save screenshots to the specified location
+    - { domain: "com.apple.screencapture", key: "location", type: "string", value: "{{ screenshot_location }}" }
+    # Save screenshots in specified format
+    - { domain: "com.apple.screencapture", key: "type", type: "string", value: "{{ screenshot_format }}" }
+    # Configure screenshot shadow
+    - { domain: "com.apple.screencapture", key: "disable-shadow", type: "bool", value: "{{ screenshot_disable_shadow }}" }
+    # Enable subpixel font rendering on non-Apple LCDs
+    - { domain: "NSGlobalDomain", key: "AppleFontSmoothing", type: "int", value: 1 }
+
+# Ensure screenshot directory exists
+- name: Ensure screenshot directory exists
+  ansible.builtin.file:
+    path: "{{ screenshot_location }}"
+    state: directory
+    mode: '0755'
+  when: screenshot_location != ansible_env.HOME + '/Desktop'

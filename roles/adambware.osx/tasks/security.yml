@@ -1,0 +1,60 @@
+---
+# Security and privacy settings
+
+# FileVault disk encryption
+- name: Check if FileVault is already enabled
+  ansible.builtin.command: fdesetup status
+  register: filevault_status
+  become: yes
+  changed_when: false
+  when: enable_filevault | default(false)
+
+- name: Enable FileVault
+  ansible.builtin.command: fdesetup enable -user "{{ ansible_env.USER }}"
+  become: yes
+  when: 
+    - enable_filevault | default(false)
+    - filevault_status.stdout is defined
+    - "'FileVault is On' not in filevault_status.stdout"
+    - not ansible_check_mode
+  register: filevault_result
+  failed_when: false
+
+# Firewall settings
+- name: Check current firewall status
+  ansible.builtin.command: /usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate
+  register: firewall_status
+  become: yes
+  changed_when: false
+  when: enable_firewall | default(false)
+
+- name: Enable macOS firewall
+  ansible.builtin.command: /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+  become: yes
+  when: 
+    - enable_firewall | default(false)
+    - firewall_status.stdout is defined
+    - "'State = 0' in firewall_status.stdout"
+    - not ansible_check_mode
+  register: firewall_result
+  failed_when: false
+
+# Secure remote login
+- name: Check if remote login is enabled
+  ansible.builtin.command: systemsetup -getremotelogin
+  register: remote_login_status
+  become: yes
+  changed_when: false
+  failed_when: false
+  when: disable_remote_login | default(true)
+
+- name: Disable remote login
+  ansible.builtin.command: systemsetup -setremotelogin off
+  become: yes
+  when: 
+    - disable_remote_login | default(true)
+    - remote_login_status.stdout is defined
+    - "'Remote Login: On' in remote_login_status.stdout"
+    - not ansible_check_mode
+  register: remote_login_result
+  failed_when: false

@@ -1,0 +1,37 @@
+---
+# General UI/UX settings for macOS
+
+- name: Set macOS general UI/UX preferences
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop:
+    # Increase window resize speed
+    - { domain: "NSGlobalDomain", key: "NSWindowResizeTime", type: "float", value: 0.001 }
+    # Expand save panel by default
+    - { domain: "NSGlobalDomain", key: "NSNavPanelExpandedStateForSaveMode", type: "bool", value: true }
+    - { domain: "NSGlobalDomain", key: "NSNavPanelExpandedStateForSaveMode2", type: "bool", value: true }
+    # Expand print panel by default
+    - { domain: "NSGlobalDomain", key: "PMPrintingExpandedStateForPrint", type: "bool", value: true }
+    - { domain: "NSGlobalDomain", key: "PMPrintingExpandedStateForPrint2", type: "bool", value: true }
+    # Save to disk (not to iCloud) by default
+    - { domain: "NSGlobalDomain", key: "NSDocumentSaveNewDocumentsToCloud", type: "bool", value: false }
+    # Automatically quit printer app once the print jobs complete
+    - { domain: "com.apple.print.PrintingPrefs", key: "Quit When Finished", type: "bool", value: true }
+    # Disable the "Are you sure you want to open this application?" dialog
+    - { domain: "com.apple.LaunchServices", key: "LSQuarantine", type: "bool", value: false }
+    # Check for software updates daily, not just once per week
+    - { domain: "com.apple.SoftwareUpdate", key: "ScheduleFrequency", type: "int", value: 1 }
+
+# Set dark mode if enabled
+- name: Set dark mode
+  community.general.osx_defaults:
+    domain: "NSGlobalDomain"
+    key: "AppleInterfaceStyle"
+    type: "string"
+    value: "Dark"
+    state: "{{ 'present' if enable_dark_mode else 'absent' }}"
+  when: enable_dark_mode is defined

@@ -1,0 +1,11 @@
+---
+# Simplified macOS version settings
+
+# Common settings for all supported macOS versions
+macos_settings:
+  safari_settings:
+    enable_developer_menu: true
+    show_full_url: true
+  security_settings:
+    enable_firewall: true
+    enable_filevault: false
