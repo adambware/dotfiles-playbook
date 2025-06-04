@@ -106,15 +106,14 @@ The role has been organized into modular task files:
 ```
 tasks/
   ├── main.yml         # Main entry point that includes task files
-  ├── version_check.yml # Detects macOS version and sets feature flags
+  ├── version_check.yml # Detects macOS version and sets compatibility warnings
   ├── general_ui.yml   # General UI/UX settings
   ├── input_devices.yml # Keyboard, trackpad, etc. settings
   ├── screen.yml       # Screen and screenshot settings
   ├── finder.yml       # Finder configurations
   ├── dock.yml         # Dock preferences
   ├── safari.yml       # Safari settings
-  ├── security.yml     # Security and privacy settings
-  └── version_features.yml # Version-specific features consolidated
+  └── security.yml     # Security and privacy settings
 ```
 
 ## Features
