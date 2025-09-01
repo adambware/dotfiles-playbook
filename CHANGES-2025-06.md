@@ -62,7 +62,12 @@
 4. Add performance measurements for slow operations
 5. Consider implementing CI/CD integration for automated testing
 
-## Final Cleanup (June 4, 2025)
+## Final Cleanup (June 4 + September 1, 2025)
+
+- **Removed Leftover Files:**
+  - Actually removed the setup.sh.new backup file (was missed in previous cleanup)
+  - Enhanced .gitignore to prevent future accumulation of backup files
+  - Added patterns for .new, .bak, .old, .orig, .backup, .save files
 
 - **Simplified Test Output:**
   - Condensed integration test results to a more readable format
@@ -73,7 +78,6 @@
 - **Streamlined Scripts:**
   - Simplified error handling in setup.sh
   - Made test_all.sh more efficient with cleaner exit handling
-  - Removed unnecessary setup.sh.new backup file
   - Added emojis to completion messages for better visual cues
 
 - **Reduced Verbosity:**

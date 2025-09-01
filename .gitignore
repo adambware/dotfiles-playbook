@@ -51,6 +51,18 @@ ENV/
 *.swo
 *~
 
+# Backup files
+*.bak
+*.old
+*.orig
+*.new
+*.backup
+*.save
+
 # Logs
 logs/
 *.log
+
+# Test results (if not using default ~/dotfiles-test-results location)
+test-results/
+*_results.*/
