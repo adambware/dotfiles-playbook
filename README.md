@@ -1,265 +1,68 @@
-# Modern macOS Setup with Ansible
+# Dotfiles
 
-This Ansible playbook automates the setup of a macOS development environment. It handles installing applications, configuring system preferences, and setting up development tools - all customized to your preferences.
-
-## Features
-
-- 🍎 Full support for both Intel and Apple Silicon Macs
-- 🎨 Sets up a complete development environment with best practices
-- 🛠️ Installs common developer tools and applications via Homebrew
-- 🧰 Configures shell environments with macOS's built-in ZSH and Oh My Zsh
-- 📦 Sets up language runtimes using version managers (tj/n, pyenv, rbenv)
-- ⚙️ Configures macOS system preferences for developer productivity
-- 🔒 Includes security enhancements
-- 🧩 Modular design makes it easy to customize
-- 🧪 Built-in testing and validation
-- 🔁 Fully idempotent implementation
-- 🔐 Support for private configurations and secrets
-
-## Requirements
-
-- macOS (Monterey 12.0 or later)
-- Administrator access
+macOS development environment setup. No frameworks, no dependencies beyond Homebrew — just shell scripts and config files.
 
 ## Quick Start
 
-The easiest way to get started is to use the included setup script:
-
 ```bash
-# Clone this repository
-git clone https://github.com/adambware/dotfiles-playbook.git ~/.dotfiles
-
-# Navigate to the playbook directory
-cd ~/.dotfiles
-
-# Make the setup script executable
-chmod +x setup.sh
-
-# Run the setup script (this will install Ansible if needed)
-./setup.sh
+git clone https://github.com/adambware/dotfiles-playbook.git ~/dotfiles
+cd ~/dotfiles
+./setup
 ```
 
-The setup script will automatically install any prerequisites (including Ansible and Homebrew if needed) and run the playbook.
-
-## Using the Setup Script
-
-The `setup.sh` script provides several options to customize your installation:
+## Selective Setup
 
 ```bash
-# Run only specific roles using tags
-./setup.sh --tags=homebrew,zsh
-
-# Run in check mode (dry run without making changes)
-./setup.sh --check
-
-# Run validation checks on the playbook
-./setup.sh --validate
-
-# Run tests to verify your installation
-./setup.sh --test
-
-# Run idempotence test to verify no changes on second run
-./setup.sh --idempotence
-
-# Show help information
-./setup.sh --help
+./setup homebrew     # Install Homebrew and packages
+./setup shell        # Set up ZSH, Oh My Zsh, and dotfiles
+./setup git          # Set up git config and global gitignore
+./setup macos        # Apply macOS system preferences
+./setup languages    # Install Python (pyenv), Ruby (rbenv), Node (n)
+./setup private      # Symlink private configs
 ```
 
-## Customization
-
-The playbook is organized into roles for different aspects of configuration:
-
-- `adambware.homebrew-install` - Installs Homebrew
-- `adambware.zsh` - Sets up Oh My Zsh with the built-in macOS ZSH
-- `adambware.homebrew-packages` - Installs CLI tools via Homebrew
-- `adambware.homebrew-casks` - Installs GUI applications via Homebrew Casks
-- `adambware.ruby` - Sets up Ruby environment with rbenv
-- `adambware.python` - Sets up Python environment with pyenv
-- `adambware.node` - Sets up Node.js environment with tj/n
-- `adambware.osx` - Configures macOS system preferences (now with Monterey, Ventura, and Sonoma support)
-- `adambware.auto-updates` - Configures automatic system updates
-- `adambware.private` - Your private configurations (optional)
-- `adambware.test` - Validates that everything is installed correctly
-
-To customize:
-
-1. Edit `vars/main.yml` to update main variables
-2. Modify roles with custom variables in their respective configuration files
-3. Run specific roles with tags: `./setup.sh --tags=homebrew,zsh`
-
-For macOS version compatibility details, see [OS_COMPATIBILITY.md](OS_COMPATIBILITY.md)
-
-## Testing and Validation
-
-This playbook includes comprehensive testing and validation:
-
-### Enhanced Validation and Testing Commands
-
-```bash
-# Run validation (syntax checks)
-./setup.sh --validate
-
-# Run tests to verify installation 
-./setup.sh --test
-
-# Test a specific role
-./setup.sh --test --role=adambware.private
-
-# Test idempotence (run playbook twice, verify no changes on second run)
-./setup.sh --idempotence
-
-# Test idempotence of a specific role
-./setup.sh --idempotence --role=adambware.private
-```
-
-For detailed testing information, see [TESTING.md](TESTING.md).
-
-### Validation
-
-Run `./setup.sh --validate` to check the playbook for:
-
-- Syntax errors
-- Best practices using ansible-lint
-- Variable definitions
-- Role dependencies
-
-### Testing
-
-Run `./setup.sh --test` to verify your installation:
-
-- Checks that all components are installed correctly
-- Verifies that paths and configurations are correct
-- Confirms that Homebrew packages and casks are present
-- Validates shell environment setup
-- Verifies language runtimes (Node.js, Ruby, Python)
-- Checks system configurations and preferences
-- Verifies architecture-specific configurations (Intel vs Apple Silicon)
-
-### Idempotence Testing
-
-Run `./setup.sh --idempotence` to verify that the playbook is idempotent:
-
-- Executes the playbook in check mode
-- Analyzes if any tasks would change the system when run again
-- Provides detailed feedback on which tasks might not be idempotent
-- Helps ensure your setup is reproducible and maintainable
-
-An idempotent playbook ensures that running it multiple times won't make unnecessary changes, which is critical for:
-
-- Consistent environments
-- Predictable updates
-- Reduced risk when applying changes
-- Faster execution on subsequent runs
-
-## Private Configurations
-
-The playbook includes a special role for your private configurations:
-
-1. Copy the example file: `cp roles/adambware.private/vars/main.yml.example roles/adambware.private/vars/main.yml`
-2. Edit the file to include your private configurations
-3. Add any private files to the `roles/adambware.private/files` directory
-
-The private role supports:
-
-- Private Homebrew packages and casks
-- SSH keys and configurations
-- Git settings
-- Environment variables
-- Shell aliases
-- VS Code extensions
-- VPN configurations
-- AWS, Azure, and other cloud configurations
-
-## Advanced Usage
-
-If you prefer to use Ansible directly instead of the setup script:
-
-```bash
-# Run the main playbook
-ansible-playbook -K osx.yml
-
-# Run with specific tags
-ansible-playbook -K osx.yml --tags "homebrew,zsh"
-
-# Run the test playbook
-ansible-playbook -K test.yml
-
-# Run the validation playbook
-ansible-playbook -K validate.yml
-
-# Run the idempotence test playbook
-ansible-playbook -K idempotence.yml
-```
+Combine commands: `./setup homebrew shell git`
 
 ## Structure
 
 ```text
-├── osx.yml               # Main playbook
-├── test.yml              # Test playbook for verifying installation
-├── validate.yml          # Validation playbook for code quality
-├── idempotence.yml       # Idempotence test playbook
-├── setup.sh              # Helper script for easy execution
-├── vars/
-│   └── main.yml          # Global variables
-└── roles/                # Individual configuration roles
-    ├── adambware.homebrew-install/
-    ├── adambware.zsh/
-    ├── adambware.homebrew-packages/
-    └── ...
+setup                   # Main runner script
+config/
+  Brewfile              # Homebrew packages and casks
+  macos.sh              # macOS system preferences (defaults write)
+  languages.sh          # Python, Ruby, Node version manager setup
+shell/
+  zshrc                 # Main ZSH config (symlinked to ~/.zshrc)
+  aliases.zsh           # Shell aliases
+  env.zsh               # Environment variables and PATH
+  config.zsh            # ZSH options and history settings
+  completion.zsh        # Completion settings
+  themes/
+    adambware.zsh-theme # Custom Oh My Zsh theme
+git/
+  gitconfig             # Git config (symlinked to ~/.gitconfig)
+  gitignore_global      # Global gitignore
+private/                # .gitignored — your personal configs
+private.example/        # Templates for private/ setup
 ```
 
-The project follows Ansible best practices with a clean structure:
-- Only includes necessary files and directories
-- Removes empty/unused vars directories
-- Uses defaults for user-configurable variables
-- Maintains a consistent structure across all roles
+## Private Configs
 
-## Extending the Playbook
+The `private/` directory is gitignored for secrets and personal settings. See `private.example/` for templates.
 
-You can easily extend this playbook to suit your needs:
+Supported private files:
 
-1. Add new roles in the `roles/` directory
-2. Add new variables to customize behavior
-3. Add new tasks to existing roles
-4. Update the main playbook to include your roles
+- `private/gitconfig.local` — Git name, email, signing key (included via `[include]` in gitconfig)
+- `private/env.local.zsh` — Private env vars, tokens, aliases (sourced by zshrc)
+- `private/Brewfile.private` — Extra Homebrew packages for work tools
+- `private/ssh_config` — SSH config (symlinked to `~/.ssh/config`)
 
-## Troubleshooting
+## Customization
 
-If you encounter issues:
-
-1. Run with `--check` to see what changes would be made
-2. Run with `-vvv` for verbose output: `./setup.sh -vvv`
-3. Check the logs for errors
-4. Run the test playbook to verify your setup: `./setup.sh --test`
-5. Run the idempotence test to identify tasks that are changing unexpectedly: `./setup.sh --idempotence`
-
-### Check Mode
-
-The `--check` option performs a complete dry run without making any changes to your system:
-
-- No packages will be installed or updated
-- No files will be created or modified
-- No Homebrew updates will be performed
-- No system settings will be changed
-- No shell commands are executed (including Oh My Zsh, pyenv, nvm, etc.)
-- No pip/gem/npm packages will be installed
-- No third-party scripts are downloaded or run
-
-All tasks in the playbook have been carefully reviewed to respect check mode. The playbook uses:
-
-- `when: not ansible_check_mode` to skip shell commands or operations that could modify the system
-- Built-in Ansible modules that natively support check mode
-- Proper conditionals to ensure idempotence
-
-This is useful for previewing what would happen during a real run and is completely safe to use.
-
-## Acknowledgments
-
-This playbook builds upon the work of:
-
-- [Zach Holman's dotfiles](https://github.com/holman/dotfiles)
-- [thoughtbot's laptop](https://github.com/thoughtbot/laptop)
-- [Mathias Bynens' .osx](https://github.com/mathiasbynens/dotfiles/blob/master/.osx)
+- **Add/remove packages**: Edit `config/Brewfile`
+- **Change macOS settings**: Edit `config/macos.sh`
+- **Update language versions**: Edit the variables at the top of `config/languages.sh`
+- **Modify shell config**: Edit files in `shell/`
 
 ## License
 
