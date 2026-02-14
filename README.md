@@ -37,8 +37,6 @@ shell/
   env.zsh               # Environment variables and PATH
   config.zsh            # ZSH options and history settings
   completion.zsh        # Completion settings
-  themes/
-    adambware.zsh-theme # Custom Oh My Zsh theme
 git/
   gitconfig             # Git config (symlinked to ~/.gitconfig)
   gitignore_global      # Global gitignore
@@ -63,6 +61,7 @@ Supported private files:
 - **Change macOS settings**: Edit `config/macos.sh`
 - **Update language versions**: Edit the variables at the top of `config/languages.sh`
 - **Modify shell config**: Edit files in `shell/`
+- **Oh My Zsh custom themes/plugins**: Managed in [omz-custom](https://github.com/adambware/omz-custom) (cloned automatically by `./setup shell`)
 
 ## License
 

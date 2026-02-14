@@ -50,10 +50,16 @@ cmd_shell() {
   link_file "$DOTFILES/shell/env.zsh"       "$HOME/.zsh/env.zsh"
   link_file "$DOTFILES/shell/completion.zsh" "$HOME/.zsh/completion.zsh"
 
-  # Custom Oh My Zsh theme
-  local themes_dir="$HOME/.oh-my-zsh/custom/themes"
-  mkdir -p "$themes_dir"
-  link_file "$DOTFILES/shell/themes/adambware.zsh-theme" "$themes_dir/adambware.zsh-theme"
+  # Oh My Zsh custom directory (themes, plugins, etc.)
+  local custom_dir="$HOME/.oh-my-zsh/custom"
+  if [[ -d "$custom_dir/.git" ]]; then
+    info "Updating Oh My Zsh custom directory..."
+    git -C "$custom_dir" pull
+  else
+    info "Cloning Oh My Zsh custom directory..."
+    rm -rf "$custom_dir"
+    git clone https://github.com/adambware/omz-custom.git "$custom_dir"
+  fi
 }
 
 cmd_git() {
