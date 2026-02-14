@@ -1,19 +1,15 @@
 #
 # ~/.zshrc
 #
+# All config (aliases, env, completion, theme, plugins) lives in
+# ~/.oh-my-zsh/custom/ via https://github.com/adambware/omz-custom
+# Oh My Zsh auto-sources all *.zsh files in that directory.
+#
 
-# Source modular config files
-for config_file in ~/.zsh/{config,env,aliases,completion}.zsh; do
-  [[ -f "$config_file" ]] && source "$config_file"
-done
-
-# Oh My Zsh
-ZSH_THEME="adambware"
-export UPDATE_ZSH_DAYS=7
-COMPLETION_WAITING_DOTS="true"
-plugins=(git macos brew)
 export ZSH=~/.oh-my-zsh
-source $ZSH/oh-my-zsh.sh
 
-# Private env (gitignored)
-[[ -f ~/.zsh/env.local.zsh ]] && source ~/.zsh/env.local.zsh
+# ohmyzsh.zsh in custom/ sets ZSH_THEME, plugins, etc.
+# Source it early so those vars are set before oh-my-zsh.sh runs.
+[[ -f "$ZSH/custom/ohmyzsh.zsh" ]] && source "$ZSH/custom/ohmyzsh.zsh"
+
+source $ZSH/oh-my-zsh.sh

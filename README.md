@@ -32,11 +32,7 @@ config/
   macos.sh              # macOS system preferences (defaults write)
   languages.sh          # Python, Ruby, Node version manager setup
 shell/
-  zshrc                 # Main ZSH config (symlinked to ~/.zshrc)
-  aliases.zsh           # Shell aliases
-  env.zsh               # Environment variables and PATH
-  config.zsh            # ZSH options and history settings
-  completion.zsh        # Completion settings
+  zshrc                 # Minimal ~/.zshrc (bootstraps Oh My Zsh)
 git/
   gitconfig             # Git config (symlinked to ~/.gitconfig)
   gitignore_global      # Global gitignore
@@ -51,7 +47,7 @@ The `private/` directory is gitignored for secrets and personal settings. See `p
 Supported private files:
 
 - `private/gitconfig.local` — Git name, email, signing key (included via `[include]` in gitconfig)
-- `private/env.local.zsh` — Private env vars, tokens, aliases (sourced by zshrc)
+- `private/env.local.zsh` — Private env vars, tokens, aliases (auto-sourced via Oh My Zsh custom/)
 - `private/Brewfile.private` — Extra Homebrew packages for work tools
 - `private/ssh_config` — SSH config (symlinked to `~/.ssh/config`)
 
@@ -60,8 +56,7 @@ Supported private files:
 - **Add/remove packages**: Edit `config/Brewfile`
 - **Change macOS settings**: Edit `config/macos.sh`
 - **Update language versions**: Edit the variables at the top of `config/languages.sh`
-- **Modify shell config**: Edit files in `shell/`
-- **Oh My Zsh custom themes/plugins**: Managed in [omz-custom](https://github.com/adambware/omz-custom) (cloned automatically by `./setup shell`)
+- **Shell config (aliases, env, theme, plugins)**: Managed in [omz-custom](https://github.com/adambware/omz-custom) (cloned automatically by `./setup shell`)
 
 ## License
 

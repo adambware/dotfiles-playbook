@@ -44,13 +44,9 @@ cmd_shell() {
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
   fi
 
-  mkdir -p "$HOME/.zsh"
-  link_file "$DOTFILES/shell/zshrc"         "$HOME/.zshrc"
-  link_file "$DOTFILES/shell/aliases.zsh"   "$HOME/.zsh/aliases.zsh"
-  link_file "$DOTFILES/shell/env.zsh"       "$HOME/.zsh/env.zsh"
-  link_file "$DOTFILES/shell/completion.zsh" "$HOME/.zsh/completion.zsh"
+  link_file "$DOTFILES/shell/zshrc" "$HOME/.zshrc"
 
-  # Oh My Zsh custom directory (themes, plugins, etc.)
+  # Oh My Zsh custom directory (themes, plugins, aliases, env, etc.)
   local custom_dir="$HOME/.oh-my-zsh/custom"
   if [[ -d "$custom_dir/.git" ]]; then
     info "Updating Oh My Zsh custom directory..."
@@ -87,9 +83,9 @@ cmd_private() {
   # Symlink private gitconfig.local if it exists
   [[ -f "$DOTFILES/private/gitconfig.local" ]] && \
     link_file "$DOTFILES/private/gitconfig.local" "$HOME/.gitconfig.local"
-  # Symlink private env if it exists
+  # Symlink private env into Oh My Zsh custom dir (auto-sourced)
   [[ -f "$DOTFILES/private/env.local.zsh" ]] && \
-    link_file "$DOTFILES/private/env.local.zsh" "$HOME/.zsh/env.local.zsh"
+    link_file "$DOTFILES/private/env.local.zsh" "$HOME/.oh-my-zsh/custom/env.local.zsh"
   # Symlink SSH config if it exists
   if [[ -f "$DOTFILES/private/ssh_config" ]]; then
     mkdir -p "$HOME/.ssh"
