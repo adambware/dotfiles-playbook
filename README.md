@@ -4,7 +4,7 @@ macOS development environment setup. No frameworks, no dependencies beyond Homeb
 
 ## Quick Start
 
-```bash
+```Shell
 git clone https://github.com/adambware/dotfiles-playbook.git ~/dotfiles
 cd ~/dotfiles
 ./setup
@@ -12,12 +12,12 @@ cd ~/dotfiles
 
 ## Selective Setup
 
-```bash
+```Shell
 ./setup homebrew     # Install Homebrew and packages
 ./setup shell        # Set up ZSH, Oh My Zsh, and dotfiles
 ./setup git          # Set up git config and global gitignore
 ./setup macos        # Apply macOS system preferences
-./setup languages    # Install Python (pyenv), Ruby (rbenv), Node (n)
+./setup languages    # Install Python, Ruby, Node via asdf
 ./setup private      # Symlink private configs
 ```
 
@@ -30,7 +30,7 @@ setup                   # Main runner script
 config/
   Brewfile              # Homebrew packages and casks
   macos.sh              # macOS system preferences (defaults write)
-  languages.sh          # Python, Ruby, Node version manager setup
+  languages.sh          # Python, Ruby, Node setup via asdf
 shell/
   zshrc                 # Minimal ~/.zshrc (bootstraps Oh My Zsh)
 git/
@@ -46,17 +46,17 @@ The `private/` directory is gitignored for secrets and personal settings. See `p
 
 Supported private files:
 
-- `private/gitconfig.local` — Git name, email, signing key (included via `[include]` in gitconfig)
-- `private/env.local.zsh` — Private env vars, tokens, aliases (auto-sourced via Oh My Zsh custom/)
-- `private/Brewfile.private` — Extra Homebrew packages for work tools
-- `private/ssh_config` — SSH config (symlinked to `~/.ssh/config`)
+* `private/gitconfig.local` — Git name, email, signing key (included via `[include]` in gitconfig)
+* `private/env.local.zsh` — Private env vars, tokens, aliases (auto-sourced via Oh My Zsh custom/)
+* `private/Brewfile.private` — Extra Homebrew packages for work tools
+* `private/ssh_config` — SSH config (symlinked to `~/.ssh/config`)
 
 ## Customization
 
-- **Add/remove packages**: Edit `config/Brewfile`
-- **Change macOS settings**: Edit `config/macos.sh`
-- **Update language versions**: Edit the variables at the top of `config/languages.sh`
-- **Shell config (aliases, env, theme, plugins)**: Managed in [omz-custom](https://github.com/adambware/omz-custom) (cloned automatically by `./setup shell`)
+* **Add/remove packages**: Edit `config/Brewfile`
+* **Change macOS settings**: Edit `config/macos.sh`
+* **Update language versions**: Edit the variables at the top of `config/languages.sh`
+* **Shell config (aliases, env, theme, plugins)**: Managed in [omz-custom](https://github.com/adambware/omz-custom) (cloned automatically by `./setup shell`)
 
 ## License
 
