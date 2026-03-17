@@ -16,7 +16,7 @@ PYTHON_PACKAGES=(ipython jupyter black flake8 pylint pytest requests pyyaml pipe
 RUBY_VERSION="3.4.9"
 RUBY_GEMS=(bundler rake rails solargraph rubocop pry)
 
-NODE_VERSION="22.14.0"
+NODE_VERSION="24.14.0"
 NPM_PACKAGES=(yarn typescript ts-node npm-check-updates)
 
 ###############################################################################
@@ -57,11 +57,15 @@ echo "Python $PYTHON_VERSION ready."
 
 echo "--- Ruby (asdf) ---"
 
+# libyaml is required to build the psych extension
+brew install libyaml 2>/dev/null || true
+
 asdf plugin add ruby 2>/dev/null || true
 
 if ! asdf list ruby 2>/dev/null | grep -q "$RUBY_VERSION"; then
   echo "Installing Ruby $RUBY_VERSION..."
-  asdf install ruby "$RUBY_VERSION"
+  RUBY_CONFIGURE_OPTS="--with-libyaml-dir=$(brew --prefix libyaml)" \
+    asdf install ruby "$RUBY_VERSION"
 fi
 
 asdf set --home ruby "$RUBY_VERSION"
