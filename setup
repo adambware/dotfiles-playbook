@@ -105,7 +105,7 @@ show_help() {
   echo "  shell       Set up ZSH, Oh My Zsh, and shell config"
   echo "  git         Set up git config and global gitignore"
   echo "  macos       Apply macOS system preferences"
-  echo "  languages   Install Python (pyenv), Ruby (rbenv), Node (n)"
+  echo "  languages   Install Python, Ruby, Node via asdf"
   echo "  private     Symlink private configs (gitconfig.local, SSH, env)"
   echo ""
   echo "Run with no arguments to execute all commands."

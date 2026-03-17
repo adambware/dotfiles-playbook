@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Language runtime setup: Python (pyenv), Ruby (rbenv), Node (n)
+# Language runtime setup via asdf
 # Run: ./setup languages
 #
 
@@ -10,34 +10,40 @@ set -euo pipefail
 # Configuration                                                               #
 ###############################################################################
 
-PYTHON_VERSION="3.12.0"
+PYTHON_VERSION="3.14.3"
 PYTHON_PACKAGES=(ipython jupyter black flake8 pylint pytest requests pyyaml pipenv poetry)
 
-RUBY_VERSION="3.3.0"
+RUBY_VERSION="3.4.9"
 RUBY_GEMS=(bundler rake rails solargraph rubocop pry)
 
-NODE_VERSION="lts"
+NODE_VERSION="22.14.0"
 NPM_PACKAGES=(yarn typescript ts-node npm-check-updates)
 
 ###############################################################################
-# Python (pyenv)                                                              #
+# asdf setup                                                                  #
 ###############################################################################
 
-echo "--- Python (pyenv) ---"
+echo "--- asdf ---"
 
-brew install pyenv 2>/dev/null || true
+brew install asdf 2>/dev/null || true
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
+# Source asdf for the current session
+source "$(brew --prefix asdf)/libexec/asdf.sh"
 
-if ! pyenv versions | grep -q "$PYTHON_VERSION"; then
+###############################################################################
+# Python                                                                      #
+###############################################################################
+
+echo "--- Python (asdf) ---"
+
+asdf plugin add python 2>/dev/null || true
+
+if ! asdf list python 2>/dev/null | grep -q "$PYTHON_VERSION"; then
   echo "Installing Python $PYTHON_VERSION..."
-  pyenv install "$PYTHON_VERSION"
+  asdf install python "$PYTHON_VERSION"
 fi
 
-pyenv global "$PYTHON_VERSION"
+asdf set --home python "$PYTHON_VERSION"
 pip install --upgrade pip --quiet
 
 for pkg in "${PYTHON_PACKAGES[@]}"; do
@@ -46,22 +52,19 @@ done
 echo "Python $PYTHON_VERSION ready."
 
 ###############################################################################
-# Ruby (rbenv)                                                                #
+# Ruby                                                                        #
 ###############################################################################
 
-echo "--- Ruby (rbenv) ---"
+echo "--- Ruby (asdf) ---"
 
-brew install rbenv ruby-build 2>/dev/null || true
+asdf plugin add ruby 2>/dev/null || true
 
-export RBENV_ROOT="$HOME/.rbenv"
-eval "$(rbenv init -)"
-
-if ! rbenv versions | grep -q "$RUBY_VERSION"; then
+if ! asdf list ruby 2>/dev/null | grep -q "$RUBY_VERSION"; then
   echo "Installing Ruby $RUBY_VERSION..."
-  rbenv install -s "$RUBY_VERSION"
+  asdf install ruby "$RUBY_VERSION"
 fi
 
-rbenv global "$RUBY_VERSION"
+asdf set --home ruby "$RUBY_VERSION"
 gem update --system --quiet 2>/dev/null || true
 
 for gem in "${RUBY_GEMS[@]}"; do
@@ -70,22 +73,21 @@ done
 echo "Ruby $RUBY_VERSION ready."
 
 ###############################################################################
-# Node.js (n)                                                                 #
+# Node.js                                                                     #
 ###############################################################################
 
-echo "--- Node.js (n) ---"
+echo "--- Node.js (asdf) ---"
 
-export N_PREFIX="$HOME/.n"
-export PATH="$N_PREFIX/bin:$PATH"
+asdf plugin add nodejs 2>/dev/null || true
 
-if [[ ! -d "$N_PREFIX" ]]; then
-  echo "Installing n and Node.js..."
-  curl -fsSL https://raw.githubusercontent.com/tj/n/master/bin/n-install | bash -s -- -y "$NODE_VERSION"
-else
-  n "$NODE_VERSION" 2>/dev/null || true
+if ! asdf list nodejs 2>/dev/null | grep -q "$NODE_VERSION"; then
+  echo "Installing Node.js $NODE_VERSION..."
+  asdf install nodejs "$NODE_VERSION"
 fi
+
+asdf set --home nodejs "$NODE_VERSION"
 
 for pkg in "${NPM_PACKAGES[@]}"; do
   npm install -g "$pkg" --silent 2>/dev/null || true
 done
-echo "Node.js ready."
+echo "Node.js $NODE_VERSION ready."
